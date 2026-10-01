@@ -81,7 +81,7 @@ async function logActivity(user, action, details = {}) {
 }
 async function notify(userId, title, message, type = 'info') {
   if (!userId) return;
-  try { await supabaseRest('gta_notifications', { method: 'POST', body: { recipient_id: userId, title, body: message, kind: type }, prefer: 'return=minimal' }); } catch {}
+  try { await supabaseRest('gta_notifications', { method: 'POST', body: { recipient_id: userId, title, message, type }, prefer: 'return=minimal' }); } catch {}
 }
 
 async function authLogin(req, res) {
@@ -318,7 +318,7 @@ async function registrations(req, res) {
 
 async function notifications(req, res) {
   const user = await requireUser(req, res); if (!user) return;
-  if (req.method === 'GET') { const { data } = await supabaseRest('gta_notifications', { query: `recipient_id=eq.${encodeURIComponent(user.id)}&select=id,title,body,kind,is_read,created_at&order=created_at.desc&limit=50` }); return json(res, 200, { notifications: (data || []).map(item => ({ ...item, message: item.body, type: item.kind })) }); }
+  if (req.method === 'GET') { const { data } = await supabaseRest('gta_notifications', { query: `recipient_id=eq.${encodeURIComponent(user.id)}&select=id,title,message,type,is_read,created_at&order=created_at.desc&limit=50` }); return json(res, 200, { notifications: data || [] }); }
   if (req.method === 'PATCH') { const body = await readJson(req, 10000); const query = body.id ? `id=eq.${encodeURIComponent(body.id)}&recipient_id=eq.${encodeURIComponent(user.id)}` : `recipient_id=eq.${encodeURIComponent(user.id)}&is_read=eq.false`; await supabaseRest('gta_notifications', { method: 'PATCH', query, body: { is_read: true }, prefer: 'return=minimal' }); return json(res, 200, { ok: true }); }
   return methodNotAllowed(res, ['GET', 'PATCH']);
 }
