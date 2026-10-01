@@ -945,9 +945,8 @@
     // ============================
     // STATS
     // ============================
-    // Le nombre d'élèves et le nombre d'utilisateurs sont des données de
-    // pilotage réservées à l'administration : ce dashboard n'affiche que les
-    // documents (les compteurs réels sont rendus par gta-cloud.js).
+    // Les compteurs réels sont rendus par gta-cloud.js, y compris pour le
+    // parent principal après le chargement des données Supabase.
     function renderStats() {
         const c = document.getElementById('statsContainer');
         if (!c) return;

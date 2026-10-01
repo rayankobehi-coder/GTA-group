@@ -394,10 +394,9 @@
     }
   }
 
-  // Le nombre d'élèves inscrits et le nombre total d'utilisateurs sont des
-  // données de pilotage : elles restent réservées à l'administration.
-  // Élèves, professeurs et parents ne doivent pas voir la volumétrie du site.
-  const voitLesCompteursGlobaux = () => ['admin', 'staff'].includes(current?.role);
+  // Les compteurs globaux sont visibles par l'administration et le parent
+  // principal, qui doit suivre les inscriptions et les effectifs.
+  const voitLesCompteursGlobaux = () => ['admin', 'staff', 'parent'].includes(current?.role);
 
   function renderStats(stats) {
     const target = document.getElementById('statsContainer'); if (!target) return;
