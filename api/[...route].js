@@ -63,6 +63,17 @@ async function countRows(table, query) {
   }
 }
 
+async function countRecentPresence() {
+  const since = encodeURIComponent(new Date(Date.now() - 5 * 60 * 1000).toISOString());
+  try {
+    const { data } = await supabaseRest('gta_presence', { query: `last_seen_at=gte.${since}&select=user_id&limit=1000` });
+    return Array.isArray(data) ? data.length : 0;
+  } catch (error) {
+    console.warn('[GTA presence count]', error.message);
+    return 0;
+  }
+}
+
 async function sendTelegram(text) {
   const token = process.env.TELEGRAM_BOT_TOKEN;
   if (!token) return { sent: false, error: 'TELEGRAM_BOT_TOKEN non configuré.' };
@@ -190,7 +201,7 @@ async function deleteUser(req, res, id) {
 async function dashboard(req, res) {
   const user = await requireUser(req, res); if (!user) return;
   const [users, students, documents, online, registrations, unread] = await Promise.all([
-    countRows('gta_users'), countRows('gta_users', 'role=eq.eleve'), countRows('gta_documents'), countRows('gta_presence', `last_seen_at=gte.${encodeURIComponent(new Date(Date.now() - 5 * 60 * 1000).toISOString())}`), roleCanManageUsers(user.role) ? countRows('gta_registrations', 'status=eq.new') : Promise.resolve(0), countRows('gta_notifications', `legacy_recipient_id=eq.${encodeURIComponent(user.id)}&is_read=eq.false`),
+    countRows('gta_users'), countRows('gta_users', 'role=eq.eleve'), countRows('gta_documents'), countRecentPresence(), roleCanManageUsers(user.role) ? countRows('gta_registrations', 'status=eq.new') : Promise.resolve(0), countRows('gta_notifications', `legacy_recipient_id=eq.${encodeURIComponent(user.id)}&is_read=eq.false`),
   ]);
   return json(res, 200, { stats: { users, students, documents, online, registrations, unread }, database: 'operational', server_time: new Date().toISOString() });
 }
