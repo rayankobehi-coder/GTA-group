@@ -159,7 +159,15 @@ async function createUser(req, res) {
   const role = ['admin', 'parent', 'prof', 'eleve', 'staff'].includes(body.role) ? body.role : 'eleve';
   const fullName = clean(body.full_name || body.fullName, 150);
   if (!username || password.length < 4 || !fullName) return json(res, 400, { error: 'Nom d’utilisateur, mot de passe (4 caractères minimum) et nom complet requis.' });
-  const { data } = await supabaseRest('gta_users', { method: 'POST', body: { username, password_hash: hashPassword(password), full_name: fullName, email: clean(body.email, 160) || null, phone: clean(body.phone, 60) || null, role, permissions: body.permissions || {}, is_active: true }, prefer: 'return=representation' });
+  const existing = await supabaseRest('gta_users', { query: `username=eq.${encodeURIComponent(username)}&select=id&limit=1` });
+  if (existing.data?.length) return json(res, 409, { error: 'Cet identifiant existe déjà. Choisissez-en un autre.' });
+  let data;
+  try {
+    ({ data } = await supabaseRest('gta_users', { method: 'POST', body: { username, password_hash: hashPassword(password), full_name: fullName, email: clean(body.email, 160) || null, phone: clean(body.phone, 60) || null, role, permissions: body.permissions || {}, is_active: true }, prefer: 'return=representation' }));
+  } catch (error) {
+    if (String(error.details?.code || '').toUpperCase() === '23505' || /duplicate key|username_key/i.test(error.message)) return json(res, 409, { error: 'Cet identifiant existe déjà. Choisissez-en un autre.' });
+    throw error;
+  }
   const created = data?.[0];
   if (!created) return json(res, 500, { error: 'Création du compte impossible.' });
   await supabaseRest('gta_user_settings', { method: 'POST', body: { user_id: created.id, full_name: created.full_name, email: created.email, phone: created.phone, username: created.username }, prefer: 'return=minimal' });
