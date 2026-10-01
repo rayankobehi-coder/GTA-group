@@ -175,7 +175,7 @@ async function deleteUser(req, res, id) {
 async function dashboard(req, res) {
   const user = await requireUser(req, res); if (!user) return;
   const [users, students, documents, online, registrations, unread] = await Promise.all([
-    countRows('gta_users'), countRows('gta_users', 'role=eq.eleve'), countRows('gta_documents'), countRows('gta_users', `last_login_at=gte.${encodeURIComponent(new Date(Date.now() - 5 * 60 * 1000).toISOString())}`), roleCanManageUsers(user.role) ? countRows('gta_registrations', 'status=eq.new') : Promise.resolve(0), countRows('gta_notifications', `recipient_id=eq.${encodeURIComponent(user.id)}&is_read=eq.false`),
+    countRows('gta_users'), countRows('gta_users', 'role=eq.eleve'), countRows('gta_documents'), countRows('gta_presence', `last_seen_at=gte.${encodeURIComponent(new Date(Date.now() - 5 * 60 * 1000).toISOString())}`), roleCanManageUsers(user.role) ? countRows('gta_registrations', 'status=eq.new') : Promise.resolve(0), countRows('gta_notifications', `recipient_id=eq.${encodeURIComponent(user.id)}&is_read=eq.false`),
   ]);
   return json(res, 200, { stats: { users, students, documents, online, registrations, unread }, database: 'operational', server_time: new Date().toISOString() });
 }
