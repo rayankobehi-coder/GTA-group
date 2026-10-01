@@ -95,7 +95,7 @@ async function authLogin(req, res) {
   if (!user || !user.is_active || !verifyPassword(password, user.password_hash)) return json(res, 401, { error: 'Identifiant ou mot de passe incorrect.' });
   await supabaseRest('gta_users', { method: 'PATCH', query: `id=eq.${encodeURIComponent(user.id)}`, body: { last_login_at: new Date().toISOString() }, prefer: 'return=minimal' });
   await supabaseRest('gta_presence', { method: 'POST', body: { user_id: user.id, last_seen_at: new Date().toISOString(), user_agent: req.headers['user-agent'] || '' }, prefer: 'resolution=merge-duplicates,return=minimal' });
-  issueSession(res, user);
+  issueSession(res, user, req.headers['x-forwarded-proto'] === 'https' || Boolean(req.socket?.encrypted));
   await logActivity(user, 'connexion', { page: PAGE_BY_ROLE[user.role] });
   return json(res, 200, { user: asPublicUser(user) });
 }
@@ -152,7 +152,10 @@ async function updateUser(req, res, id) {
   if (body.username) patch.username = clean(body.username, 80).toLowerCase();
   if (body.role && ['admin', 'parent', 'prof', 'eleve', 'staff'].includes(body.role)) patch.role = body.role;
   if (body.is_active !== undefined) patch.is_active = Boolean(body.is_active);
-  if (body.password) patch.password_hash = hashPassword(String(body.password));
+  if (body.password !== undefined && body.password !== '') {
+    if (String(body.password).length < 4) return json(res, 400, { error: 'Le nouveau mot de passe doit contenir au moins 4 caractères.' });
+    patch.password_hash = hashPassword(String(body.password));
+  }
   const { data } = await supabaseRest('gta_users', { method: 'PATCH', query: `id=eq.${encodeURIComponent(id)}&select=id,username,full_name,email,phone,role,permissions,is_active,last_login_at,created_at`, body: patch, prefer: 'return=representation' });
   const updated = data?.[0];
   if (!updated) return json(res, 404, { error: 'Utilisateur introuvable.' });
@@ -358,7 +361,7 @@ async function dispatch(req, res) {
   const [first, second] = parts;
   if (first === 'auth' && second === 'login' && req.method === 'POST') return authLogin(req, res);
   if (first === 'auth' && second === 'me' && req.method === 'GET') return authMe(req, res);
-  if (first === 'auth' && second === 'logout' && req.method === 'POST') { clearSession(res); return json(res, 200, { ok: true }); }
+  if (first === 'auth' && second === 'logout' && req.method === 'POST') { clearSession(res, req.headers['x-forwarded-proto'] === 'https' || Boolean(req.socket?.encrypted)); return json(res, 200, { ok: true }); }
   if (first === 'users' && !second && req.method === 'GET') return listUsers(req, res);
   if (first === 'users' && !second && req.method === 'POST') return createUser(req, res);
   if (first === 'users' && second && req.method === 'PATCH') return updateUser(req, res, second);

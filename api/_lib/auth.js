@@ -38,13 +38,13 @@ function readSession(req) {
   } catch { return null; }
 }
 
-function issueSession(res, user) {
+function issueSession(res, user, secure = true) {
   const token = signSession({ sub: user.id, username: user.username, role: user.role, exp: Date.now() + SESSION_TTL_SECONDS * 1000 });
-  setCookie(res, SESSION_COOKIE, token, { maxAge: SESSION_TTL_SECONDS });
+  setCookie(res, SESSION_COOKIE, token, { maxAge: SESSION_TTL_SECONDS, secure });
 }
 
-function clearSession(res) {
-  setCookie(res, SESSION_COOKIE, '', { maxAge: 0 });
+function clearSession(res, secure = true) {
+  setCookie(res, SESSION_COOKIE, '', { maxAge: 0, secure });
 }
 
 async function getUserBySession(req) {
