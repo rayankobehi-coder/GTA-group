@@ -53,9 +53,14 @@ async function requireUser(req, res) {
 function requireAdmin(user, res) { if (!roleCanManageUsers(user.role)) { json(res, 403, { error: 'Droits administrateur requis.' }); return false; } return true; }
 
 async function countRows(table, query) {
-  const { response } = await supabaseRest(table, { method: 'HEAD', query: `${query ? `${query}&` : ''}select=id&limit=1`, prefer: 'count=exact' });
-  const range = response.headers.get('content-range') || '';
-  return Number(range.split('/')[1] || 0);
+  try {
+    const { response } = await supabaseRest(table, { method: 'HEAD', query: `${query ? `${query}&` : ''}select=id&limit=1`, prefer: 'count=exact' });
+    const range = response.headers.get('content-range') || '';
+    return Number(range.split('/')[1] || 0);
+  } catch (error) {
+    console.warn(`[GTA count ${table}]`, error.message);
+    return 0;
+  }
 }
 
 async function sendTelegram(text) {
