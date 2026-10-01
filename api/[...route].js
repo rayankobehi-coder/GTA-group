@@ -81,7 +81,13 @@ async function logActivity(user, action, details = {}) {
 }
 async function notify(userId, title, message, type = 'info') {
   if (!userId) return;
-  try { await supabaseRest('gta_notifications', { method: 'POST', body: { recipient_id: userId, title, message, type }, prefer: 'return=minimal' }); } catch {}
+  try {
+    await supabaseRest('gta_notifications', {
+      method: 'POST',
+      body: { legacy_recipient_id: userId, recipient_id: null, title, body: message, kind: type },
+      prefer: 'return=minimal',
+    });
+  } catch (error) { console.warn('[GTA notification]', error.message); }
 }
 
 async function authLogin(req, res) {
@@ -121,8 +127,12 @@ async function authMe(req, res) {
 async function listUsers(req, res) {
   const user = await requireUser(req, res); if (!user) return;
   const query = roleCanManageUsers(user.role) ? 'select=id,username,full_name,email,phone,role,permissions,is_active,last_login_at,created_at&order=created_at.desc&limit=1000' : 'role=eq.eleve&select=id,username,full_name,email,phone,role,permissions,is_active,last_login_at,created_at&order=created_at.desc&limit=1000';
-  const { data } = await supabaseRest('gta_users', { query });
-  return json(res, 200, { users: (data || []).map(asPublicUser) });
+  const [usersResult, presenceResult] = await Promise.all([
+    supabaseRest('gta_users', { query }),
+    supabaseRest('gta_presence', { query: `last_seen_at=gte.${encodeURIComponent(new Date(Date.now() - 5 * 60 * 1000).toISOString())}&select=user_id,last_seen_at&limit=1000` }),
+  ]);
+  const online = new Set((presenceResult.data || []).map(item => item.user_id));
+  return json(res, 200, { users: (usersResult.data || []).map(item => ({ ...asPublicUser(item), is_online: online.has(item.id) })) });
 }
 
 async function createUser(req, res) {
@@ -175,7 +185,7 @@ async function deleteUser(req, res, id) {
 async function dashboard(req, res) {
   const user = await requireUser(req, res); if (!user) return;
   const [users, students, documents, online, registrations, unread] = await Promise.all([
-    countRows('gta_users'), countRows('gta_users', 'role=eq.eleve'), countRows('gta_documents'), countRows('gta_presence', `last_seen_at=gte.${encodeURIComponent(new Date(Date.now() - 5 * 60 * 1000).toISOString())}`), roleCanManageUsers(user.role) ? countRows('gta_registrations', 'status=eq.new') : Promise.resolve(0), countRows('gta_notifications', `recipient_id=eq.${encodeURIComponent(user.id)}&is_read=eq.false`),
+    countRows('gta_users'), countRows('gta_users', 'role=eq.eleve'), countRows('gta_documents'), countRows('gta_presence', `last_seen_at=gte.${encodeURIComponent(new Date(Date.now() - 5 * 60 * 1000).toISOString())}`), roleCanManageUsers(user.role) ? countRows('gta_registrations', 'status=eq.new') : Promise.resolve(0), countRows('gta_notifications', `legacy_recipient_id=eq.${encodeURIComponent(user.id)}&is_read=eq.false`),
   ]);
   return json(res, 200, { stats: { users, students, documents, online, registrations, unread }, database: 'operational', server_time: new Date().toISOString() });
 }
@@ -321,8 +331,17 @@ async function registrations(req, res) {
 
 async function notifications(req, res) {
   const user = await requireUser(req, res); if (!user) return;
-  if (req.method === 'GET') { const { data } = await supabaseRest('gta_notifications', { query: `recipient_id=eq.${encodeURIComponent(user.id)}&select=id,title,message,type,is_read,created_at&order=created_at.desc&limit=50` }); return json(res, 200, { notifications: data || [] }); }
-  if (req.method === 'PATCH') { const body = await readJson(req, 10000); const query = body.id ? `id=eq.${encodeURIComponent(body.id)}&recipient_id=eq.${encodeURIComponent(user.id)}` : `recipient_id=eq.${encodeURIComponent(user.id)}&is_read=eq.false`; await supabaseRest('gta_notifications', { method: 'PATCH', query, body: { is_read: true }, prefer: 'return=minimal' }); return json(res, 200, { ok: true }); }
+  const recipient = encodeURIComponent(user.id);
+  if (req.method === 'GET') {
+    const { data } = await supabaseRest('gta_notifications', { query: `legacy_recipient_id=eq.${recipient}&select=id,title,body,kind,is_read,created_at&order=created_at.desc&limit=50` });
+    return json(res, 200, { notifications: (data || []).map(item => ({ ...item, message: item.body || '', type: item.kind || 'info' })) });
+  }
+  if (req.method === 'PATCH') {
+    const body = await readJson(req, 10000);
+    const query = body.id ? `id=eq.${encodeURIComponent(body.id)}&legacy_recipient_id=eq.${recipient}` : `legacy_recipient_id=eq.${recipient}&is_read=eq.false`;
+    await supabaseRest('gta_notifications', { method: 'PATCH', query, body: { is_read: true }, prefer: 'return=minimal' });
+    return json(res, 200, { ok: true });
+  }
   return methodNotAllowed(res, ['GET', 'PATCH']);
 }
 

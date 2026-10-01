@@ -418,7 +418,7 @@
     const roleMap = { Administrateur: 'admin', Staff: 'staff', Professeur: 'prof', Élève: 'eleve', Parent: 'parent' };
     const filtered = users.filter(user => (!roleFilter || user.role === (roleMap[roleFilter] || roleFilter)) && (!search || [user.full_name, user.username, user.email].join(' ').toLowerCase().includes(search)));
     const count = document.getElementById('userCountInfo'); if (count) count.textContent = `${filtered.length} utilisateur(s) affiché(s) sur ${users.length} total`;
-    tbody.innerHTML = filtered.length ? filtered.map(user => `<tr><td><div class="user-cell"><div class="user-cell-avatar ${roleClass(user.role)}">${escapeHtml(initials(user.full_name))}</div><div class="user-cell-info"><strong>${escapeHtml(user.full_name)}</strong><span>${escapeHtml(user.phone || '')}</span></div></div></td><td style="font-family:monospace;font-size:.8rem;color:var(--text-muted)">${escapeHtml(user.username)}</td><td>${escapeHtml(user.email || '-')}</td><td><span class="badge-role">${escapeHtml(displayRole(user.role))}</span></td><td><span class="status-dot ${user.last_login_at ? 'online' : 'offline'}"></span>${user.last_login_at ? 'Actif' : 'Jamais connecté'}</td><td><div class="action-btns"><button class="action-btn" title="Modifier" onclick="openEditUser('${user.id}')"><i class="fa-solid fa-pen"></i></button><button class="action-btn danger" title="Supprimer" onclick="deleteUserById('${user.id}')"><i class="fa-solid fa-trash"></i></button></div></td></tr>`).join('') : '<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:28px">Aucun utilisateur trouvé</td></tr>';
+    tbody.innerHTML = filtered.length ? filtered.map(user => `<tr><td><div class="user-cell"><div class="user-cell-avatar ${roleClass(user.role)}">${escapeHtml(initials(user.full_name))}</div><div class="user-cell-info"><strong>${escapeHtml(user.full_name)}</strong><span>${escapeHtml(user.phone || '')}</span></div></div></td><td style="font-family:monospace;font-size:.8rem;color:var(--text-muted)">${escapeHtml(user.username)}</td><td>${escapeHtml(user.email || '-')}</td><td><span class="badge-role">${escapeHtml(displayRole(user.role))}</span></td><td><span class="status-dot ${user.is_online ? 'online' : 'offline'}"></span>${user.is_online ? 'En ligne' : 'Hors ligne'}</td><td><div class="action-btns"><button class="action-btn" title="Modifier" onclick="openEditUser('${user.id}')"><i class="fa-solid fa-pen"></i></button><button class="action-btn danger" title="Supprimer" onclick="deleteUserById('${user.id}')"><i class="fa-solid fa-trash"></i></button></div></td></tr>`).join('') : '<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:28px">Aucun utilisateur trouvé</td></tr>';
   }
 
   function renderStudents() {
@@ -499,7 +499,8 @@
   };
 
   function renderNotifications() {
-    const badge = document.querySelector('.notif-badge'); const unread = notifications.filter(n => !n.is_read).length; if (badge) { badge.textContent = unread; badge.style.display = unread ? 'inline-flex' : 'none'; }
+    const unread = notifications.filter(n => !n.is_read).length;
+    document.querySelectorAll('.notif-badge').forEach(badge => { badge.textContent = unread; badge.style.display = 'inline-flex'; });
   }
   function closeNotificationsPanel() {
     document.getElementById('gtaNotificationPanel')?.remove();
