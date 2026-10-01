@@ -1,0 +1,25 @@
+{
+  "name": "gta-platform",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Plateforme Groupe GTA reliée à Supabase",
+  "scripts": {
+    "check": "node scripts/check-project.js",
+    "check:scripts": "node scripts/check-scripts.js",
+    "check:images": "node scripts/check-images.js",
+    "check:responsive": "node scripts/check-responsive.js",
+    "check:casse": "node scripts/check-assets-casse.js",
+    "lister:emojis": "node scripts/lister-emojis.js",
+    "serve": "node scripts/local-server.js",
+    "verify:defaults": "node scripts/verify-defaults.js",
+    "test:login": "node scripts/test-login.js",
+    "test:client": "node scripts/test-client.js",
+    "test:dates": "node scripts/test-dates.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.112.3"
+  }
+}

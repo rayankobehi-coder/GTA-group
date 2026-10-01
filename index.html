@@ -1,0 +1,2523 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Groupe GTA — Excellence & Réussite Scolaire</title>
+    <link rel="icon" href="logo.jpg" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">
+    <style>
+        /* ======================================
+           RÉINITIALISATION ET VARIABLES
+           ====================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primaire: #dc2626;
+            --primaire-clair: #ef4444;
+            --primaire-sombre: #991b1b;
+            --primaire-lueur: rgba(239, 68, 68, 0.4);
+            --fond-sombre: #0a0e1a;
+            --fond-plus-sombre: #060912;
+            --fond-carte: rgba(20, 27, 45, 0.6);
+            --fond-carte-survol: rgba(30, 41, 65, 0.8);
+            --texte-primaire: #f1f5f9;
+            --texte-secondaire: #cbd5e1;
+            --texte-estompe: #94a3b8;
+            --bordure: rgba(239, 68, 68, 0.15);
+            --bordure-survol: rgba(239, 68, 68, 0.4);
+            --degrade-rouge: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+            --degrade-sombre: linear-gradient(135deg, #1e293b 0%, #0a0e1a 100%);
+            --ombre-rouge: 0 10px 40px -10px rgba(220, 38, 38, 0.5);
+            --ombre-douce: 0 8px 32px rgba(0, 0, 0, 0.3);
+            /* Durée d'un passage complet de la barre défilante rouge.
+               Plus la valeur est petite, plus le défilement est rapide. */
+            --vitesse-defilement: 18s;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--fond-sombre);
+            color: var(--texte-primaire);
+            overflow-x: hidden;
+            line-height: 1.6;
+            font-weight: 400;
+        }
+
+        /* Arrière-plan animé */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(220, 38, 38, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(99, 102, 241, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(239, 68, 68, 0.03) 0%, transparent 70%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Barre de défilement personnalisée */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--fond-plus-sombre);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--degrade-rouge);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primaire-clair);
+        }
+
+        /* ======================================
+           NAVIGATION
+           ====================================== */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 1.2rem 2rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            background: rgba(10, 14, 26, 0.7);
+            border-bottom: 1px solid transparent;
+        }
+
+        nav.defile {
+            padding: 0.8rem 2rem;
+            background: rgba(10, 14, 26, 0.95);
+            border-bottom: 1px solid var(--bordure);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .conteneur-nav {
+            max-width: 1320px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-nav {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .logo-nav:hover {
+            transform: scale(1.02);
+        }
+
+        .img-logo-nav {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--primaire-clair);
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
+        }
+
+        .marque-nav {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .titre-nav {
+            color: white;
+            font-weight: 800;
+            font-size: 19px;
+            letter-spacing: 0.06em;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .titre-nav span {
+            background: linear-gradient(135deg, #ef4444, #f87171);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .sous-titre-nav {
+            color: var(--texte-estompe);
+            font-size: 10px;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            font-weight: 500;
+            margin-top: 2px;
+        }
+
+        .liens-nav {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .liens-nav button {
+            background: none;
+            border: none;
+            color: var(--texte-secondaire);
+            cursor: pointer;
+            font-size: 20px;
+            font-weight: 500;
+            letter-spacing: 0.05em;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            position: relative;
+        }
+
+        .liens-nav button:not(.btn-inscription)::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: var(--primaire);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        .liens-nav button:not(.btn-inscription):hover {
+            color: white;
+        }
+
+        .liens-nav button:not(.btn-inscription):hover::after {
+            width: 60%;
+        }
+
+        .btn-inscription {
+            background: var(--degrade-rouge) !important;
+            color: white !important;
+            padding: 0.7rem 1.6rem !important;
+            border-radius: 10px !important;
+            font-weight: 700 !important;
+            font-size: 13px !important;
+            letter-spacing: 0.08em !important;
+            box-shadow: var(--ombre-rouge);
+            margin-left: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-inscription::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-inscription:hover::before {
+            left: 100%;
+        }
+
+        .btn-inscription:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px -10px rgba(220, 38, 38, 0.6);
+        }
+
+        .btn-connexion {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.45rem;
+            background: rgba(15, 23, 42, 0.85) !important;
+            color: white !important;
+            border: 1px solid rgba(239, 68, 68, 0.35) !important;
+            padding: 0.65rem 1rem !important;
+            border-radius: 10px !important;
+            font-weight: 700 !important;
+            font-size: 12px !important;
+            letter-spacing: 0.08em !important;
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.25);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-connexion:hover {
+            transform: translateY(-2px);
+            background: rgba(30, 41, 65, 0.95) !important;
+            border-color: rgba(248, 113, 113, 0.6) !important;
+            box-shadow: 0 12px 24px rgba(239, 68, 68, 0.18);
+        }
+
+        .icone-connexion {
+            width: 16px;
+            height: 16px;
+            object-fit: contain;
+            display: block;
+            flex-shrink: 0;
+        }
+
+        .btn-menu-mobile {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        @media (max-width: 968px) {
+            .liens-nav {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: rgba(10, 14, 26, 0.98);
+                backdrop-filter: blur(20px);
+                flex-direction: column;
+                padding: 1.5rem;
+                gap: 0.5rem;
+                border-top: 1px solid var(--bordure);
+            }
+            .liens-nav.actif {
+                display: flex;
+            }
+            .liens-nav button {
+                width: 100%;
+                text-align: left;
+            }
+            .btn-menu-mobile {
+                display: block;
+            }
+        }
+
+        /* ======================================
+           BANNIÈRE DÉFILANTE
+           ====================================== */
+        .banniere-defilante {
+            background: linear-gradient(90deg, var(--primaire-sombre) 0%, var(--primaire) 50%, var(--primaire-sombre) 100%);
+            overflow: hidden;
+            padding: 0.85rem 0;
+            margin-top: 85px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .contenu-defilant {
+            display: flex;
+            animation: defilement-gauche var(--vitesse-defilement, 18s) linear infinite;
+            white-space: nowrap;
+        }
+
+        .texte-defilant {
+            padding: 0 2.5rem;
+            color: white;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.03em;
+        }
+
+        @keyframes defilement-gauche {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* ======================================
+           SECTION ACCUEIL (HÉROS)
+           ====================================== */
+        .section-accueil {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background:
+                linear-gradient(135deg, rgba(15, 23, 42, 0.18) 0%, rgba(15, 23, 42, 0.35) 100%),
+                url("Fond.JPG") center/cover no-repeat;
+            overflow: hidden;
+            padding: 4rem 1.5rem;
+        }
+
+        .section-accueil::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: 
+                radial-gradient(ellipse at top, rgba(15, 23, 42, 0.18) 0%, transparent 50%),
+                radial-gradient(ellipse at bottom, rgba(15, 23, 42, 0.8) 0%, transparent 50%);
+            z-index: 1;
+        }
+
+        .section-accueil::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: 1;
+            mask-image: radial-gradient(ellipse at center, black 0%, transparent 70%);
+            -webkit-mask-image: radial-gradient(ellipse at center, black 0%, transparent 70%);
+        }
+
+        .particules-accueil {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .particule {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--primaire-clair);
+            border-radius: 50%;
+            opacity: 0.6;
+            box-shadow: 0 0 10px var(--primaire-clair);
+            animation: flotter-particule 15s infinite linear;
+        }
+
+        @keyframes flotter-particule {
+            0% { transform: translateY(100vh) translateX(0); opacity: 0; }
+            10% { opacity: 0.6; }
+            90% { opacity: 0.6; }
+            100% { transform: translateY(-10vh) translateX(100px); opacity: 0; }
+        }
+
+        .contenu-accueil {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            max-width: 950px;
+            animation: fonduVersLeHaut 1s ease-out;
+        }
+
+        @keyframes fonduVersLeHaut {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .badge-accueil {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid var(--bordure-survol);
+            color: #fca5a5;
+            padding: 0.7rem 1.5rem;
+            border-radius: 9999px;
+            font-size: 12px;
+            letter-spacing: 0.1em;
+            margin-bottom: 2.5rem;
+            text-transform: uppercase;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 30px rgba(239, 68, 68, 0.15);
+        }
+
+        .badge-accueil::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: var(--primaire-clair);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--primaire-clair);
+            animation: impulsion 2s infinite;
+        }
+
+        @keyframes impulsion {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+
+        .titre-accueil {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(48px, 9vw, 96px);
+            font-weight: 900;
+            color: white;
+            margin-bottom: 1.5rem;
+            line-height: 1;
+            letter-spacing: -0.03em;
+            text-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .titre-accueil span {
+            background: linear-gradient(135deg, #ef4444 0%, #f87171 50%, #ef4444 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+            display: inline-block;
+        }
+
+        .texte-accueil {
+            font-size: 16px;
+            color: var(--texte-secondaire);
+            margin: 2rem auto;
+            line-height: 1.8;
+            background: rgba(8, 12, 20, 0.35);
+            backdrop-filter: blur(20px);
+            padding: 2rem 2.5rem;
+            border-radius: 1.25rem;
+            border: 1px solid var(--bordure);
+            max-width: 800px;
+            box-shadow: var(--ombre-douce);
+        }
+
+        .texte-accueil strong {
+            color: #fca5a5;
+            font-weight: 700;
+        }
+
+        .boutons-accueil {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 0.95rem 2.2rem;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            font-family: inherit;
+            position: relative;
+            overflow: hidden;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .btn-principal {
+            background: var(--degrade-rouge);
+            color: white;
+            box-shadow: var(--ombre-rouge);
+        }
+
+        .btn-principal::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+            transition: left 0.6s;
+        }
+
+        .btn-principal:hover::before {
+            left: 100%;
+        }
+
+        .btn-principal:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 40px -10px rgba(220, 38, 38, 0.6);
+        }
+
+        .btn-secondaire {
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-secondaire:hover {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: var(--primaire-clair);
+            transform: translateY(-3px);
+        }
+
+        .statistiques-accueil {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-top: 4rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .statistique {
+            text-align: center;
+            padding: 1.5rem 1rem;
+            background: rgba(20, 27, 45, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--bordure);
+            border-radius: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .statistique:hover {
+            transform: translateY(-5px);
+            border-color: var(--bordure-survol);
+            background: rgba(20, 27, 45, 0.7);
+            box-shadow: 0 10px 30px rgba(239, 68, 68, 0.15);
+        }
+
+        .valeur-statistique {
+            font-size: 40px;
+            font-weight: 800;
+            font-family: 'Playfair Display', serif;
+            background: linear-gradient(135deg, #ef4444, #f87171);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .etiquette-statistique {
+            font-size: 12px;
+            color: var(--texte-estompe);
+            margin-top: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .statistiques-accueil {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            .texte-accueil {
+                padding: 1.5rem;
+                font-size: 15px;
+            }
+        }
+
+        /* ======================================
+           SECTIONS GÉNÉRIQUES
+           ====================================== */
+        section {
+            position: relative;
+        }
+
+        .enveloppe-section {
+            padding: 6rem 2rem;
+            max-width: 1320px;
+            margin: 0 auto;
+        }
+
+        .etiquette-section {
+            display: inline-block;
+            color: var(--primaire-clair);
+            font-size: 12px;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            font-weight: 700;
+            padding: 0.4rem 1rem;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid var(--bordure);
+            border-radius: 50px;
+        }
+
+        .titre-section {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(32px, 5vw, 52px);
+            font-weight: 800;
+            color: white;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+        }
+
+        .titre-section span {
+            background: linear-gradient(135deg, #ef4444, #f87171);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .description-section {
+            color: var(--texte-secondaire);
+            font-size: 16px;
+            line-height: 1.8;
+            max-width: 650px;
+        }
+
+        .texte-centre {
+            text-align: center;
+        }
+
+        .texte-centre .description-section {
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* ======================================
+           SECTION PHILOSOPHIE
+           ====================================== */
+        .section-philosophie {
+            background: var(--fond-sombre);
+            position: relative;
+        }
+
+        .contenu-philosophie {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            margin-top: 4rem;
+        }
+
+        .image-philosophie {
+            width: 100%;
+            height: 450px;
+            background:
+                url("yas.jpg") center/cover no-repeat;
+            filter: brightness(1.02) contrast(1.02) saturate(1.00);
+            border-radius: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--texte-estompe);
+            font-size: 60px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: var(--ombre-douce);
+        }
+
+        .texte-philosophie h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            color: white;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .texte-philosophie p {
+            color: var(--texte-secondaire);
+            font-size: 15px;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+
+        .grille-caracteristiques {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .caracteristique {
+            display: flex;
+            gap: 1rem;
+            align-items: start;
+        }
+
+        .icone-caracteristique {
+            width: 42px;
+            height: 42px;
+            background: var(--degrade-rouge);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 800;
+            flex-shrink: 0;
+            box-shadow: 0 5px 15px rgba(220, 38, 38, 0.3);
+        }
+
+        .texte-caracteristique p {
+            color: var(--texte-secondaire);
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .texte-caracteristique strong {
+            color: white;
+        }
+
+        .piliers {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-top: 5rem;
+        }
+
+        .pilier {
+            background: var(--fond-carte);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--bordure);
+            padding: 2.5rem 1.8rem;
+            border-radius: 1.25rem;
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pilier::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--degrade-rouge);
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+            transform-origin: left;
+        }
+
+        .pilier:hover {
+            transform: translateY(-8px);
+            border-color: var(--bordure-survol);
+            background: var(--fond-carte-survol);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 30px rgba(239, 68, 68, 0.1);
+        }
+
+        .pilier:hover::before {
+            transform: scaleX(1);
+        }
+
+        .icone-pilier {
+            font-size: 40px;
+            margin-bottom: 1.2rem;
+            display: inline-block;
+            filter: drop-shadow(0 4px 10px rgba(239, 68, 68, 0.3));
+        }
+
+        /* Icônes illustrées qui remplacent les emojis des piliers. */
+        .icone-pilier img {
+            width: 46px;
+            height: 46px;
+            object-fit: contain;
+            display: block;
+        }
+
+        .pilier h4 {
+            color: white;
+            font-size: 18px;
+            margin-bottom: 0.7rem;
+            font-weight: 700;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .pilier p {
+            color: var(--texte-estompe);
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        @media (max-width: 968px) {
+            .contenu-philosophie {
+                grid-template-columns: 1fr;
+            }
+            .piliers {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .piliers, .grille-caracteristiques {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ======================================
+           SECTION DIRECTION
+           ====================================== */
+        .section-direction {
+            background: linear-gradient(180deg, var(--fond-sombre) 0%, #0d1424 100%);
+            position: relative;
+        }
+
+        .grille-direction {
+            display: grid;
+            grid-template-columns: 1fr 1.3fr;
+            gap: 4rem;
+            align-items: center;
+            margin-top: 4rem;
+        }
+
+        .image-directeur {
+            width: 100%;
+            height: 500px;
+            background:
+                linear-gradient(135deg, rgba(15, 23, 42, 0.06) 0%, rgba(15, 23, 42, 0.16) 100%),
+                url("Andre.jpg") center/cover no-repeat;
+            filter: brightness(1.18) contrast(1.08) saturate(1.06);
+            border-radius: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--texte-estompe);
+            font-size: 80px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: var(--ombre-douce);
+        }
+
+        .image-directeur::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at bottom, rgba(8, 12, 20, 0.15) 0%, transparent 60%);
+        }
+
+        .visuel-directeur {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .carte-profil {
+            background: rgba(8, 12, 20, 0.92);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 18px 20px;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.28);
+        }
+
+        .nom-profil {
+            color: #ffffff;
+            font-size: 20px;
+            font-weight: 700;
+            margin: 0 0 6px 0;
+            letter-spacing: -0.4px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .titre-profil {
+            color: #7ec2ff;
+            font-size: 14px;
+            font-weight: 600;
+            margin: 0 0 14px 0;
+        }
+
+        .conteneur-etiquettes {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .etiquette {
+            background: rgba(127, 29, 29, 0.35);
+            color: #ffc9ce;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 6px 12px;
+            border-radius: 999px;
+            border: 1px solid rgba(248, 113, 113, 0.25);
+            display: inline-block;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .info-directeur h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            color: white;
+            margin-bottom: 0.5rem;
+            font-weight: 800;
+        }
+
+        .role-directeur {
+            display: inline-block;
+            color: var(--primaire-clair);
+            font-size: 12px;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            font-weight: 700;
+            padding: 0.4rem 1rem;
+            background: rgba(239, 68, 68, 0.1);
+            border-radius: 50px;
+            border: 1px solid var(--bordure);
+        }
+
+        .bio-directeur {
+            color: var(--texte-secondaire);
+            font-size: 15px;
+            line-height: 1.8;
+            margin-bottom: 1.2rem;
+        }
+
+        .bio-directeur strong {
+            color: #fca5a5;
+        }
+
+        .details-directeur {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .detail {
+            background: var(--fond-carte);
+            backdrop-filter: blur(10px);
+            padding: 1.3rem;
+            border-radius: 0.75rem;
+            border: 1px solid var(--bordure);
+            border-left: 3px solid var(--primaire-clair);
+            transition: all 0.3s ease;
+        }
+
+        .detail:hover {
+            background: var(--fond-carte-survol);
+            transform: translateX(4px);
+        }
+
+        .etiquette-detail {
+            color: var(--texte-estompe);
+            font-size: 11px;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.1em;
+            font-weight: 600;
+        }
+
+        .valeur-detail {
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        @media (max-width: 968px) {
+            .grille-direction {
+                grid-template-columns: 1fr;
+            }
+            .details-directeur {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ======================================
+           SECTION RÉSULTATS
+           ====================================== */
+        .section-resultats {
+            background: var(--fond-sombre);
+        }
+
+        .statistiques-resultats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin: 4rem 0;
+        }
+
+        .carte-resultat {
+            background: var(--fond-carte);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--bordure);
+            padding: 2.5rem 1.5rem;
+            border-radius: 1.25rem;
+            text-align: center;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .carte-resultat::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 0;
+            background: var(--degrade-rouge);
+            opacity: 0.1;
+            transition: height 0.4s ease;
+        }
+
+        .carte-resultat:hover {
+            transform: translateY(-8px);
+            border-color: var(--bordure-survol);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 30px rgba(239, 68, 68, 0.15);
+        }
+
+        .carte-resultat:hover::after {
+            height: 100%;
+        }
+
+        .nombre-resultat {
+            font-family: 'Playfair Display', serif;
+            font-size: 56px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ef4444, #f87171);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            line-height: 1;
+            position: relative;
+            z-index: 1;
+        }
+
+        .etiquette-resultat {
+            color: var(--texte-estompe);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: 600;
+            position: relative;
+            z-index: 1;
+        }
+
+        .contenu-resultats {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            margin-top: 4rem;
+        }
+
+        .texte-resultats h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            color: white;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+        }
+
+        .texte-resultats p {
+            color: var(--texte-secondaire);
+            font-size: 15px;
+            line-height: 1.8;
+            margin-bottom: 1.2rem;
+        }
+
+        .repartition-resultats {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            margin-top: 2rem;
+        }
+
+        .element-repartition {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.2rem 1.5rem;
+            background: var(--fond-carte);
+            border-radius: 0.75rem;
+            border-left: 3px solid var(--primaire-clair);
+            transition: all 0.3s ease;
+        }
+
+        .element-repartition:hover {
+            background: var(--fond-carte-survol);
+            transform: translateX(4px);
+        }
+
+        .etiquette-repartition {
+            color: var(--texte-secondaire);
+            font-weight: 500;
+        }
+
+        .valeur-repartition {
+            background: linear-gradient(135deg, #ef4444, #f87171);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 800;
+            font-size: 20px;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .image-resultats {
+            width: 100%;
+            height: 450px;
+            background:
+                linear-gradient(135deg, rgba(15, 23, 42, 0.08) 0%, rgba(15, 23, 42, 0.18) 100%),
+                url("Résultat .JPG") center/cover no-repeat;
+            filter: brightness(1.14) contrast(1.06) saturate(1.04);
+            border-radius: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--texte-estompe);
+            font-size: 70px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: var(--ombre-douce);
+        }
+
+        @media (max-width: 968px) {
+            .statistiques-resultats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .contenu-resultats {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ======================================
+           SECTION APPEL À L'ACTION (CTA)
+           ====================================== */
+        .section-action {
+            background:
+                linear-gradient(180deg, rgba(8, 12, 20, 0.55) 0%, rgba(8, 12, 20, 0.78) 100%),
+                url("Fond2.JPG") center/cover no-repeat;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section-action::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at center, rgba(8, 12, 20, 0.12) 0%, transparent 72%);
+            pointer-events: none;
+        }
+
+        .citation-action {
+            font-family: 'Playfair Display', serif;
+            font-size: 19px;
+            font-style: italic;
+            color: white;
+            max-width: 800px;
+            margin: 2.5rem auto;
+            line-height: 1.8;
+            background: var(--fond-carte);
+            backdrop-filter: blur(20px);
+            padding: 2.5rem 3rem;
+            border-radius: 1.25rem;
+            border: 1px solid var(--bordure);
+            border-left: 4px solid var(--primaire-clair);
+            position: relative;
+            box-shadow: var(--ombre-douce);
+        }
+
+        .citation-action::before {
+            content: '"';
+            position: absolute;
+            top: -20px;
+            left: 30px;
+            font-size: 120px;
+            color: var(--primaire);
+            opacity: 0.3;
+            font-family: 'Playfair Display', serif;
+            line-height: 1;
+        }
+
+        .citation-action strong {
+            background: linear-gradient(135deg, #ef4444, #f87171);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-style: normal;
+            font-weight: 700;
+        }
+
+        .texte-action {
+            color: var(--texte-secondaire);
+            font-size: 16px;
+            max-width: 700px;
+            margin: 2rem auto;
+            line-height: 1.8;
+        }
+
+        .boutons-action {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .services-action {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-top: 4rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .service {
+            background: var(--fond-carte);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--bordure);
+            padding: 2rem 1.5rem;
+            border-radius: 1.25rem;
+            text-align: center;
+            transition: all 0.4s ease;
+        }
+
+        .service:hover {
+            transform: translateY(-8px);
+            border-color: var(--bordure-survol);
+            background: var(--fond-carte-survol);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .icone-service {
+            font-size: 42px;
+            margin-bottom: 1rem;
+            display: inline-block;
+            filter: drop-shadow(0 4px 10px rgba(239, 68, 68, 0.3));
+        }
+
+        /* Icônes illustrées qui remplacent les emojis dans les cartes de service. */
+        .icone-service img {
+            width: 48px;
+            height: 48px;
+            object-fit: contain;
+            display: block;
+        }
+
+        .service p {
+            color: var(--texte-secondaire);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        @media (max-width: 968px) {
+            .services-action {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .boutons-action {
+                flex-direction: column;
+            }
+            .citation-action {
+                padding: 2rem 1.5rem;
+                font-size: 16px;
+            }
+        }
+
+        /* ======================================
+           SECTION FORMULAIRE
+           ====================================== */
+        .section-formulaire {
+            background: var(--fond-sombre);
+        }
+
+        .entete-formulaire {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .conteneur-formulaire {
+            max-width: 700px;
+            margin: 0 auto;
+            background: var(--fond-carte);
+            backdrop-filter: blur(20px);
+            padding: 3rem;
+            border-radius: 1.5rem;
+            border: 1px solid var(--bordure);
+            box-shadow: var(--ombre-douce);
+        }
+
+        .groupe-formulaire {
+            margin-bottom: 1.5rem;
+        }
+
+        .ligne-formulaire {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.2rem;
+        }
+
+        .groupe-formulaire label {
+            display: block;
+            color: var(--texte-secondaire);
+            font-size: 12px;
+            margin-bottom: 0.6rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .groupe-formulaire input,
+        .groupe-formulaire select,
+        .groupe-formulaire textarea {
+            width: 100%;
+            background: rgba(10, 14, 26, 0.6);
+            border: 1px solid var(--bordure);
+            color: white;
+            padding: 0.95rem 1.1rem;
+            border-radius: 0.75rem;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .groupe-formulaire input::placeholder,
+        .groupe-formulaire textarea::placeholder {
+            color: var(--texte-estompe);
+        }
+
+        .groupe-formulaire input:focus,
+        .groupe-formulaire select:focus,
+        .groupe-formulaire textarea:focus {
+            outline: none;
+            border-color: var(--primaire-clair);
+            background: rgba(10, 14, 26, 0.9);
+            box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1);
+        }
+
+        .groupe-formulaire textarea {
+            resize: vertical;
+            min-height: 130px;
+        }
+
+        .soumission-formulaire {
+            width: 100%;
+            background: var(--degrade-rouge);
+            color: white;
+            padding: 1.1rem;
+            border: none;
+            border-radius: 0.75rem;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            box-shadow: var(--ombre-rouge);
+            font-family: inherit;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .soumission-formulaire::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.6s;
+        }
+
+        .soumission-formulaire:hover::before {
+            left: 100%;
+        }
+
+        .soumission-formulaire:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px -10px rgba(220, 38, 38, 0.6);
+        }
+
+        .note-whatsapp {
+            margin-top: 1rem;
+            text-align: center;
+            font-size: 13px;
+            line-height: 1.6;
+            color: var(--texte-estompe);
+        }
+
+        .note-whatsapp[hidden] {
+            display: none;
+        }
+
+        .note-whatsapp a {
+            color: #25d366;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .note-whatsapp a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 640px) {
+            .ligne-formulaire {
+                grid-template-columns: 1fr;
+            }
+            .conteneur-formulaire {
+                padding: 2rem 1.5rem;
+            }
+        }
+
+        /* ======================================
+           SECTION CONTACT
+           ====================================== */
+        .section-contact {
+            background: linear-gradient(180deg, #0d1424 0%, var(--fond-sombre) 100%);
+        }
+
+        .entete-contact {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .cartes-contact {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 4rem;
+        }
+
+        .carte-contact {
+            background: var(--fond-carte);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--bordure);
+            padding: 2.5rem 2rem;
+            border-radius: 1.25rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .carte-contact::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--degrade-rouge);
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .carte-contact:hover {
+            transform: translateY(-8px);
+            border-color: var(--bordure-survol);
+            background: var(--fond-carte-survol);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 30px rgba(239, 68, 68, 0.15);
+        }
+
+        .carte-contact:hover::before {
+            transform: scaleX(1);
+        }
+
+        .icone-contact {
+            font-size: 40px;
+            margin-bottom: 1rem;
+            display: inline-block;
+            filter: drop-shadow(0 4px 10px rgba(239, 68, 68, 0.3));
+        }
+
+        /* Icônes illustrées qui remplacent les emojis dans les cartes de contact.
+           Le téléphone garde son emoji : aucune icône fournie pour l'instant. */
+        .icone-contact img {
+            width: 46px;
+            height: 46px;
+            object-fit: contain;
+            display: block;
+        }
+
+        .carte-contact h4 {
+            color: white;
+            margin-bottom: 0.8rem;
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .carte-contact p {
+            color: var(--texte-secondaire);
+            font-size: 14px;
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        .action-contact {
+            background: var(--fond-carte);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--bordure-survol);
+            padding: 3rem 2rem;
+            border-radius: 1.5rem;
+            text-align: center;
+            box-shadow: var(--ombre-douce);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-contact::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at center, rgba(239, 68, 68, 0.08) 0%, transparent 70%);
+        }
+
+        .action-contact h3 {
+            font-family: 'Playfair Display', serif;
+            color: white;
+            margin-bottom: 1rem;
+            font-size: 28px;
+            font-weight: 700;
+            position: relative;
+        }
+
+        .action-contact p {
+            color: var(--texte-secondaire);
+            margin-bottom: 2rem;
+            position: relative;
+            font-size: 15px;
+        }
+
+        .boutons-action-contact {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            position: relative;
+            flex-wrap: wrap;
+        }
+
+        @media (max-width: 968px) {
+            .cartes-contact {
+                grid-template-columns: 1fr;
+            }
+            .boutons-action-contact {
+                flex-direction: column;
+            }
+        }
+
+        /* ======================================
+           PIED DE PAGE (FOOTER)
+           ====================================== */
+        footer {
+            background: var(--fond-plus-sombre);
+            border-top: 1px solid var(--bordure);
+            padding: 4rem 2rem 2rem;
+            position: relative;
+        }
+
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--primaire), transparent);
+        }
+
+        .conteneur-pied-page {
+            max-width: 1320px;
+            margin: 0 auto;
+        }
+
+        .grille-pied-page {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr 1.2fr;
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .section-pied-page h4 {
+            color: white;
+            margin-bottom: 1.5rem;
+            font-size: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            font-weight: 700;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .section-pied-page p {
+            color: var(--texte-secondaire);
+            font-size: 15px;
+            line-height: 1.8;
+            margin-bottom: 0.6rem;
+            transition: color 0.3s ease;
+        }
+
+        .info-marque-pied-page {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .img-logo-pied-page {
+            width: 52px;
+            height: 52px;
+            object-fit: cover;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.25);
+            background: #0b1020;
+        }
+
+        .info-marque-pied-page h4 {
+            margin: 0;
+            font-size: 19px;
+        }
+
+        .info-marque-pied-page p {
+            margin: 0;
+            font-size: 13px;
+            color: var(--texte-estompe);
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+        }
+
+        .reseaux-pied-page {
+            display: flex;
+            gap: 0.8rem;
+            margin-top: 1.5rem;
+        }
+
+        .lien-reseau-pied-page {
+            width: 40px;
+            height: 40px;
+            background: var(--fond-carte);
+            border: 1px solid var(--bordure);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primaire-clair);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-weight: 700;
+        }
+
+        .lien-reseau-pied-page:hover {
+            background: var(--degrade-rouge);
+            color: white;
+            border-color: var(--primaire);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(220, 38, 38, 0.3);
+        }
+
+        /* Le clic ouvre directement la discussion WhatsApp du Groupe GTA. */
+        .lien-reseau-pied-page.reseau-whatsapp:hover {
+            background: linear-gradient(135deg, #25d366, #128c7e);
+            border-color: #25d366;
+            box-shadow: 0 10px 20px rgba(37, 211, 102, 0.35);
+        }
+
+        .lien-pied-page {
+            cursor: pointer;
+            display: block;
+            padding: 0.3rem 0;
+            transition: all 0.3s ease;
+        }
+
+        .lien-pied-page:hover {
+            color: var(--primaire-clair) !important;
+            transform: translateX(5px);
+        }
+
+        .bloc-contact-pied-page {
+            margin-bottom: 1.2rem;
+        }
+
+        .bloc-contact-pied-page p:first-child {
+            color: white !important;
+            font-weight: 600 !important;
+            font-size: 14px !important;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.4rem !important;
+        }
+
+        .bas-pied-page {
+            border-top: 1px solid var(--bordure);
+            padding-top: 2rem;
+            text-align: center;
+            color: var(--texte-estompe);
+            font-size: 14px;
+        }
+
+        .bas-pied-page p {
+            margin-bottom: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .grille-pied-page {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+        }
+
+        /* Bouton retour en haut */
+        .defilement-haut {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: var(--degrade-rouge);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            box-shadow: var(--ombre-rouge);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            z-index: 99;
+        }
+
+        .defilement-haut.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .defilement-haut:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px -5px rgba(220, 38, 38, 0.6);
+        }
+
+        /* ======================================
+           ADAPTATION AUX ÉCRANS
+           Placé en fin de feuille pour primer sur les règles ci-dessus.
+           Tout est dans des @media : l'affichage ordinateur est inchangé.
+           ====================================== */
+        img {
+            max-width: 100%;
+        }
+
+        @media (max-width: 968px) {
+            /* Les blocs d'image à hauteur figée (450-500 px) écrasaient la page
+               sur tablette et téléphone : ils sont réduits par paliers. */
+            .image-philosophie,
+            .image-resultats { height: 340px; }
+            .image-directeur { height: 400px; }
+            footer { padding: 3.5rem 1.5rem 1.75rem; }
+            .btn-menu-mobile { padding: 6px 10px; }
+        }
+
+        @media (max-width: 768px) {
+            .image-philosophie,
+            .image-resultats { height: 280px; }
+            .image-directeur { height: 320px; }
+        }
+
+        @media (max-width: 480px) {
+            .image-philosophie,
+            .image-resultats { height: 220px; }
+            .image-directeur { height: 260px; }
+            footer { padding: 2.5rem 1.1rem 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <nav id="barreNavigation">
+        <div class="conteneur-nav">
+            <button class="logo-nav" onclick="defilerVersSection('accueil')">
+                <img src="logo.jpg" alt="Logo GTA" class="img-logo-nav">
+                <div class="marque-nav">
+                    <div class="titre-nav">GROUPE <span>GTA</span></div>
+                    <div class="sous-titre-nav">Excellence · Rigueur</div>
+                </div>
+            </button>
+            <div class="liens-nav" id="liensNavigation">
+                <button onclick="defilerVersSection('accueil')">Accueil</button>
+                <button onclick="defilerVersSection('apropos')">À propos</button>
+                <button onclick="defilerVersSection('direction')">Direction</button>
+                <button onclick="defilerVersSection('resultats')">Résultats</button>
+                <button onclick="defilerVersSection('contact')">Contact</button>
+                <button class="btn-inscription" onclick="defilerVersSection('inscription')">S'INSCRIRE</button>
+                <button class="btn-connexion" type="button" aria-label="Connexion utilisateur" onclick="window.location.href='page/formulaire.html'">
+                    <img src="uti.png" alt="" class="icone-connexion">
+                    CONNEXION
+                </button>
+            </div>
+            <button class="btn-menu-mobile" onclick="basculerMenu()">☰</button>
+        </div>
+    </nav>
+
+    <div class="banniere-defilante">
+        <div class="contenu-defilant">
+            <span class="texte-defilant">★ Les inscriptions au PREPABAC {{ANNEE_SESSION}} ont débuté et se poursuivent tous les jours — Contactez-nous : 01 73 04 55 19 / 01 02 72 40 94 — Ne laissez pas votre avenir au hasard — Rejoignez l'excellence avec le Groupe GTA</span>
+            <span class="texte-defilant">★ Les inscriptions au PREPABAC {{ANNEE_SESSION}} ont débuté et se poursuivent tous les jours — Contactez-nous : 01 73 04 55 19 / 01 02 72 40 94 — Ne laissez pas votre avenir au hasard — Rejoignez l'excellence avec le Groupe GTA</span>
+        </div>
+    </div>
+
+    <section class="section-accueil" id="accueil">
+        <div class="particules-accueil" id="particules"></div>
+        <div class="contenu-accueil">
+            <div class="badge-accueil">★Fondé en 2008 — Depuis {{ANCIENNETE}} ans au service de l'excellence</div>
+            <h1 class="titre-accueil">GROUPE <span>GTA</span></h1>
+            <p class="texte-accueil">
+                Le Groupe GTA est une structure d'encadrement scolaire de haute performance fondée en <strong>2008</strong>, qui s'est imposée comme une référence incontournable de l'excellence éducative pour les élèves de la <strong>6e à la Terminale</strong>. Fort de près de deux décennies d'expérience, le GTA propose un accompagnement rigoureux basé sur une discipline de fer, une méthodologie d'apprentissage pointue et un suivi individualisé permettant de transformer le potentiel de chaque apprenant en réussite concrète.
+            </p>
+            <div class="boutons-accueil">
+                <button class="btn btn-principal" onclick="defilerVersSection('inscription')">S'inscrire maintenant →</button>
+                <button class="btn btn-secondaire" onclick="defilerVersSection('apropos')">Découvrir le GTA</button>
+            </div>
+            <div class="statistiques-accueil">
+                <div class="statistique">
+                    <div class="valeur-statistique">{{ANCIENNETE}}+</div>
+                    <div class="etiquette-statistique">Années d'Expérience</div>
+                </div>
+                <div class="statistique">
+                    <div class="valeur-statistique">6e-Tle</div>
+                    <div class="etiquette-statistique">Niveaux Encadrés</div>
+                </div>
+                <div class="statistique">
+                    <div class="valeur-statistique">100%</div>
+                    <div class="etiquette-statistique">Engagement Excellence</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-philosophie" id="apropos">
+        <div class="enveloppe-section">
+            <div class="etiquette-section">Notre Philosophie</div>
+            <h2 class="titre-section">L'Excellence par la <span>Rigueur</span></h2>
+            <p class="description-section">En alliant tradition d'excellence et vision moderne de l'enseignement, le GTA demeure un pilier stratégique pour la réussite scolaire et l'épanouissement intellectuel des futurs cadres.</p>
+
+            <div class="contenu-philosophie">
+                <div class="image-philosophie" aria-hidden="true"></div>
+                <div class="texte-philosophie">
+                    <h3>Une Approche Unique de l'Encadrement</h3>
+                    <p>Sous la direction d'une équipe d'élite, l'institution combine un environnement de travail stimulant, des évaluations hebdomadaires intensives et un corps enseignant de premier plan pour garantir non seulement l'obtention des diplômes nationaux avec mention, mais aussi une préparation solide aux défis de l'enseignement supérieur.</p>
+                    
+                    <div class="grille-caracteristiques">
+                        <div class="caracteristique">
+                            <div class="icone-caracteristique">✓</div>
+                            <div class="texte-caracteristique">
+                                <p><strong>Suivi personnalisé</strong> de chaque élève</p>
+                            </div>
+                        </div>
+                        <div class="caracteristique">
+                            <div class="icone-caracteristique">✓</div>
+                            <div class="texte-caracteristique">
+                                <p><strong>Programmes adaptés</strong> au curriculum national</p>
+                            </div>
+                        </div>
+                        <div class="caracteristique">
+                            <div class="icone-caracteristique">✓</div>
+                            <div class="texte-caracteristique">
+                                <p><strong>Soutien psychologique</strong> et motivation</p>
+                            </div>
+                        </div>
+                        <div class="caracteristique">
+                            <div class="icone-caracteristique">✓</div>
+                            <div class="texte-caracteristique">
+                                <p><strong>Communication régulière</strong> avec les parents</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="piliers">
+                <div class="pilier">
+                    <div class="icone-pilier"><img src="1er.png" alt="Médaille de première place" width="46" height="46"></div>
+                    <h4>Discipline de Fer</h4>
+                    <p>Un encadrement rigoureux qui forge le caractère et l'esprit de travail nécessaires à la réussite.</p>
+                </div>
+                <div class="pilier">
+                    <div class="icone-pilier"><img src="examen.png" alt="Élève en évaluation surveillée" width="46" height="46"></div>
+                    <h4>Évaluations Hebdomadaires</h4>
+                    <p>Des tests réguliers pour mesurer la progression et identifier les axes d'amélioration de chaque élève.</p>
+                </div>
+                <div class="pilier">
+                    <div class="icone-pilier"><img src="prof.png" alt="Professeur" width="46" height="46"></div>
+                    <h4>Corps Enseignant d'Élite</h4>
+                    <p>Des professeurs sélectionnés pour leur excellence pédagogique et leur passion de transmettre.</p>
+                </div>
+                <div class="pilier">
+                    <div class="icone-pilier"><img src="trophee.png" alt="Trophée" width="46" height="46"></div>
+                    <h4>Résultats Garantis</h4>
+                    <p>Des diplômes nationaux avec mention et une préparation solide aux défis de l'enseignement supérieur.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-direction" id="direction">
+        <div class="enveloppe-section">
+            <div class="etiquette-section">Leadership</div>
+            <h2 class="titre-section">Notre <span>Direction</span></h2>
+
+            <div class="grille-direction">
+                <div class="visuel-directeur">
+                    <div class="image-directeur" aria-hidden="true"></div>
+                    <div class="carte-profil">
+                        <h2 class="nom-profil">Dr. Pierre André Guinan</h2>
+                        <div class="titre-profil">Encadreur Général du GTA</div>
+                        <div class="conteneur-etiquettes">
+                            <span class="etiquette">ISE</span>
+                            <span class="etiquette">Docteur</span>
+                            <span class="etiquette">Major INPHB</span>
+                        </div>
+                    </div>
+                   
+                </div>
+                <div class="info-directeur">
+                    <h3>Dr. Pierre André Guinan</h3>
+                    <div class="role-directeur">Encadreur Général du GTA</div>
+                    <p class="bio-directeur">Le Docteur Pierre André Guinan incarne l'élite intellectuelle et l'ambition éducative ivoirienne. Pur produit de l'excellence, il s'est distingué comme <strong>Major de l'illustre INPHB de Yamoussoukro</strong> avant de devenir Docteur des universités, Ingénieur Statisticien Économiste (ISE) et entrepreneur visionnaire.</p>
+                    <p class="bio-directeur">Il met sa double expertise scientifique et analytique au service de la réussite scolaire. Véritable mentor, il transforme l'éducation en un levier de performance, insufflant aux élèves de la 6e à la Terminale la <strong>rigueur, la discipline et la soif de vaincre</strong> qui ont marqué son propre parcours exceptionnel.</p>
+                    
+                    <div class="details-directeur">
+                        <div class="detail">
+                            <div class="etiquette-detail">Formation</div>
+                            <div class="valeur-detail">INPHB Yamoussoukro (Major)</div>
+                        </div>
+                        <div class="detail">
+                            <div class="etiquette-detail">Titre</div>
+                            <div class="valeur-detail">Docteur des universités</div>
+                        </div>
+                        <div class="detail">
+                            <div class="etiquette-detail">Spécialité</div>
+                            <div class="valeur-detail">Ingénieur Statisticien Économiste</div>
+                        </div>
+                        <div class="detail">
+                            <div class="etiquette-detail">Mission</div>
+                            <div class="valeur-detail">Former les leaders de demain</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-resultats" id="resultats">
+        <div class="enveloppe-section">
+            <div class="etiquette-section">Performances</div>
+            <h2 class="titre-section">Nos Résultats <span>Parlent</span></h2>
+            <p class="description-section">Des années de travail acharné, de discipline et d'excellence — les chiffres reflètent notre engagement indéfectible envers la réussite de chaque élève.</p>
+
+            <div class="statistiques-resultats">
+                <div class="carte-resultat">
+                    <div class="nombre-resultat">98%</div>
+                    <div class="etiquette-resultat">Réussite BEPC</div>
+                </div>
+                <div class="carte-resultat">
+                    <div class="nombre-resultat">95%</div>
+                    <div class="etiquette-resultat">Réussite BAC</div>
+                </div>
+                <div class="carte-resultat">
+                    <div class="nombre-resultat">87%</div>
+                    <div class="etiquette-resultat">Mentions obtenues</div>
+                </div>
+                <div class="carte-resultat">
+                    <div class="nombre-resultat">{{ANCIENNETE}}+</div>
+                    <div class="etiquette-resultat">Années d'excellence</div>
+                </div>
+            </div>
+
+            <div class="contenu-resultats">
+                <div class="texte-resultats">
+                    <h3>L'Excellence en Chiffres</h3>
+                    <p>Depuis 2008, le Groupe GTA a accompagné des centaines d'élèves vers le succès. Nos méthodes éprouvées produisent des résultats exceptionnels aux examens nationaux — le BEPC et le BAC — avec des taux de réussite qui dépassent largement la moyenne nationale.</p>
+                    <p>Chaque mention obtenue par nos élèves est le fruit d'un travail collectif entre nos enseignants d'élite, notre encadreur général et les élèves eux-mêmes, animés d'une même soif de vaincre.</p>
+                    
+                    <div class="repartition-resultats">
+                        <div class="element-repartition">
+                            <span class="etiquette-repartition">Taux de réussite BEPC</span>
+                            <span class="valeur-repartition">98%</span>
+                        </div>
+                        <div class="element-repartition">
+                            <span class="etiquette-repartition">Taux de réussite BAC</span>
+                            <span class="valeur-repartition">95%</span>
+                        </div>
+                        <div class="element-repartition">
+                            <span class="etiquette-repartition">Mentions (TB/B/AB)</span>
+                            <span class="valeur-repartition">87%</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="image-resultats" aria-hidden="true"></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-action">
+        <div class="enveloppe-section texte-centre">
+            <div class="etiquette-section">Rejoignez l'Excellence</div>
+            <h2 class="titre-section">Votre Succès, <span>Notre Mission</span></h2>
+            
+            <div class="citation-action">
+                Choisir le Groupe GTA, c'est faire le choix de l'excellence et d'une réussite garantie. Nous ne nous contentons pas d'enseigner, nous <strong>forgeons les leaders de demain</strong> en transformant chaque potentiel en une réussite concrète.
+                <br><br>
+                <strong>— Le Groupe GTA</strong>
+            </div>
+
+            <p class="texte-action">Ne laissez pas votre avenir au hasard : rejoignez la structure qui cultive la rigueur, la discipline et la soif de vaincre. Faire le pas vers nous, c'est faire le meilleur choix pour votre succès et votre épanouissement intellectuel.</p>
+
+            <div class="boutons-action">
+                <button class="btn btn-principal" onclick="defilerVersSection('inscription')">S'inscrire  →</button>
+                <button class="btn btn-secondaire" onclick="defilerVersSection('contact')">Nous contacter</button>
+            </div>
+
+            <div class="services-action">
+                <div class="service">
+                    <div class="icone-service"><img src="pile.png" alt="Pile de livres" width="48" height="48"></div>
+                    <p>Prépa BEPC intensif</p>
+                </div>
+                <div class="service">
+                    <div class="icone-service"><img src="lobtention.png" alt="Chapeau de diplômé sur des livres" width="48" height="48"></div>
+                    <p>Prépa BAC toutes séries</p>
+                </div>
+                <div class="service">
+                    <div class="icone-service"><img src="livres.png" alt="Livres alignés" width="48" height="48"></div>
+                    <p>Soutien scolaire 6e--Tle</p>
+                </div>
+                <div class="service">
+                    <div class="icone-service"><img src="ouvert.png" alt="Panneau ouvert" width="48" height="48"></div>
+                    <p>PREPABAC {{ANNEE_SESSION}} ouvert</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-formulaire" id="inscription">
+        <div class="enveloppe-section">
+            <div class="entete-formulaire">
+                <div class="etiquette-section">Rejoignez-nous</div>
+                <h2 class="titre-section"><span>Inscription</span></h2>
+                <p class="description-section" style="margin-left: auto; margin-right: auto;">Les inscriptions sont ouvertes. Rejoignez l'excellence dès aujourd'hui.</p>
+            </div>
+
+            <form class="conteneur-formulaire" onsubmit="gererSoumissionFormulaire(event)">
+                <div class="ligne-formulaire">
+                    <div class="groupe-formulaire">
+                        <label for="prenom">Prénom</label>
+                        <input type="text" id="prenom" name="prenom" placeholder="Ex: Kouamé" required>
+                    </div>
+                    <div class="groupe-formulaire">
+                        <label for="nom">Nom de famille</label>
+                        <input type="text" id="nom" name="nom" placeholder="Ex: Kouassi" required>
+                    </div>
+                </div>
+
+                <div class="ligne-formulaire">
+                    <div class="groupe-formulaire">
+                        <label for="classe">Classe visée</label>
+                        <select id="classe" name="classe" required>
+                            <option value="">Choisir une classe</option>
+                            <option value="6eme">6ème</option>
+                            <option value="5eme">5ème</option>
+                            <option value="4eme">4ème</option>
+                            <option value="3eme">3ème (BEPC)</option>
+                            <option value="2nde">2nde</option>
+                            <option value="1ere">1ère</option>
+                            <option value="terminale">Terminale (BAC)</option>
+                            <option value="prepabac">PREPABAC</option>
+                        </select>
+                    </div>
+                    <div class="groupe-formulaire">
+                        <label for="telephone">Téléphone</label>
+                        <input type="tel" id="telephone" name="telephone" placeholder="Ex: 01 02 72 40 94" required>
+                    </div>
+                </div>
+
+                <div class="groupe-formulaire">
+                    <label for="email">Email (optionnel)</label>
+                    <input type="email" id="email" name="email" placeholder="votre@email.com">
+                </div>
+
+                <div class="groupe-formulaire">
+                    <label for="message">Message (optionnel)</label>
+                    <textarea id="message" name="message" placeholder="Précisez vos besoins ou vos questions..."></textarea>
+                </div>
+
+                <button type="submit" class="soumission-formulaire">Envoyer ma demande d'inscription →</button>
+
+                <p class="note-whatsapp" id="blocSecoursWhatsApp" hidden>
+                    <a id="lienSecoursWhatsApp" href="https://wa.me/2250173045519" target="_blank" rel="noopener noreferrer">WhatsApp ne s'est pas ouvert ? Cliquez ici pour envoyer votre demande →</a>
+                </p>
+            </form>
+        </div>
+    </section>
+
+    <section class="section-contact" id="contact">
+        <div class="enveloppe-section">
+            <div class="entete-contact">
+                <div class="etiquette-section">Contactez-nous</div>
+                <h2 class="titre-section">Nous Sommes <span>Disponibles</span></h2>
+                <p class="description-section" style="margin-left: auto; margin-right: auto;">Notre équipe est à votre disposition pour répondre à toutes vos questions.</p>
+            </div>
+
+            <div class="cartes-contact">
+                <div class="carte-contact" onclick="window.open('tel:0173045519')">
+                    <div class="icone-contact">📞</div>
+                    <h4>Téléphones</h4>
+                    <p>01 73 04 55 19<br>01 02 72 40 94</p>
+                    <p style="margin-top: 0.8rem; font-size: 12px; color: var(--texte-estompe);">Lun – Sam, 8h – 20h</p>
+                </div>
+                <div class="carte-contact" onclick="window.open('mailto:rayankobehi@gmail.com')">
+                    <div class="icone-contact"><img src="gmail.png" alt="Email" width="46" height="46"></div>
+                    <h4>Email</h4>
+                    <p>rayankobehi@gmail.com</p>
+                    <p style="margin-top: 0.8rem; font-size: 12px; color: var(--texte-estompe);">Réponse sous 24h</p>
+                </div>
+                <div class="carte-contact" onclick="window.open('https://share.google/15bwkRzLxpDMjzEfa', '_blank')" style="cursor: pointer;">
+                    <div class="icone-contact"><img src="localisation.png" alt="Localisation" width="46" height="46"></div>
+                    <h4>Localisation</h4>
+                    <p>EPP Municipal 1 et 2</p>
+                    <p style="margin-top: 0.4rem; font-size: 13px;">Face au Lycée Sainte Marie de Cocody</p>
+                </div>
+            </div>
+
+            <div class="action-contact">
+                <h3>L'élite vous attend !</h3>
+                <p>Les inscriptions ont débuté. N'attendez plus.</p>
+                <div class="boutons-action-contact">
+                    <a href="tel:0173045519" class="btn btn-principal">📞 Appeler maintenant</a>
+                    <button class="btn btn-secondaire" onclick="defilerVersSection('inscription')">S'inscrire en ligne</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="conteneur-pied-page">
+            <div class="grille-pied-page">
+                <div class="section-pied-page">
+                    <div class="info-marque-pied-page">
+                        <img src="logo.jpg" alt="Logo GTA" class="img-logo-pied-page">
+                        <div>
+                            <h4>GROUPE GTA</h4>
+                            <p>Fondé en 2008</p>
+                        </div>
+                    </div>
+                    <p>Une structure d'encadrement scolaire de haute performance, forgeant les leaders de demain depuis plus de {{ANCIENNETE}} ans.</p>
+                    <div class="reseaux-pied-page">
+                        <a href="https://www.tiktok.com/@gta.structure?_r=1&_t=ZS-97GZ7Avakel" target="_blank" rel="noopener noreferrer" class="lien-reseau-pied-page" aria-label="TikTok"><img src="tik.png" alt="TikTok" style="width: 18px; height: 18px; object-fit: contain;"></a>
+                        <a href="https://www.instagram.com/gta.group_?igsh=bzhrN3Njejgzbm02" target="_blank" rel="noopener noreferrer" class="lien-reseau-pied-page" aria-label="Instagram"><img src="insta.png" alt="Instagram" style="width: 18px; height: 18px; object-fit: contain;"></a>
+                        <a href="https://wa.me/2250173045519" target="_blank" rel="noopener noreferrer" class="lien-reseau-pied-page reseau-whatsapp" aria-label="WhatsApp" title="Discuter avec le Groupe GTA sur WhatsApp"><img src="what.png" alt="WhatsApp" style="width: 18px; height: 18px; object-fit: contain;"></a>
+                    </div>
+                </div>
+
+                <div class="section-pied-page">
+                    <h4>Navigation</h4>
+                    <p class="lien-pied-page" onclick="defilerVersSection('accueil')">Accueil</p>
+                    <p class="lien-pied-page" onclick="defilerVersSection('apropos')">À propos</p>
+                    <p class="lien-pied-page" onclick="defilerVersSection('direction')">Direction</p>
+                    <p class="lien-pied-page" onclick="defilerVersSection('resultats')">Résultats</p>
+                    <p class="lien-pied-page" onclick="defilerVersSection('contact')">Contact</p>
+                    <p class="lien-pied-page" onclick="defilerVersSection('inscription')">S'inscrire</p>
+                </div>
+
+                <div class="section-pied-page">
+                    <h4>Contact</h4>
+                    <div class="bloc-contact-pied-page">
+                        <p>Téléphones</p>
+                        <p>01 73 04 55 19</p>
+                        <p>01 02 72 40 94</p>
+                    </div>
+                    <div class="bloc-contact-pied-page">
+                        <p>Email</p>
+                        <p>rayankobehi@gmail.com</p>
+                    </div>
+                    <div class="bloc-contact-pied-page">
+                        <p>Localisation</p>
+                        <p>EPP Municipal 1 et 2<br>Face au Lycée Sainte Marie de Cocody</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bas-pied-page">
+                <p>© {{ANNEE}} Groupe GTA — Tous droits réservés. Excellence · Rigueur · Réussite</p>
+                <p style="color: var(--primaire-clair); font-weight: 600;">Inscriptions PREPABAC {{ANNEE_SESSION}} ouvertes</p>
+            </div>
+        </div>
+    </footer>
+
+    <button class="defilement-haut" id="btnDefilementHaut" onclick="defilerVersLeHaut()">↑</button>
+
+    <script>
+        // ============================================================
+        //  DATES AUTO-ACTUALISÉES
+        //  Aucune année n'est écrite en dur dans le HTML : les jetons
+        //  sont remplacés au chargement à partir de la date de l'appareil,
+        //  donc la page reste exacte sans aucune intervention.
+        //
+        //   {{ANNEE_SESSION}} : session PREPABAC visée. Les inscriptions
+        //                       s'ouvrent à la rentrée de septembre pour
+        //                       l'examen de l'année suivante ; à partir de
+        //                       septembre on vise donc N+1 (2027 en 2026).
+        //   {{ANNEE}}         : année civile courante (mention de copyright).
+        //   {{ANCIENNETE}}    : années écoulées depuis la fondation en 2008.
+        // ============================================================
+        (function actualiserDates() {
+            const ANNEE_FONDATION = 2008;
+            const MAINTENANT = new Date();
+            const anneeCivile = MAINTENANT.getFullYear();
+            const RENTREE = 8; // septembre (les mois sont indexés à partir de 0)
+            const anneeSession = MAINTENANT.getMonth() >= RENTREE ? anneeCivile + 1 : anneeCivile;
+            const jetons = {
+                '{{ANNEE_SESSION}}': String(anneeSession),
+                '{{ANNEE}}': String(anneeCivile),
+                '{{ANCIENNETE}}': String(Math.max(0, anneeCivile - ANNEE_FONDATION))
+            };
+            // {{ANNEE_SESSION}} est testé en premier, avant son préfixe {{ANNEE}}.
+            const motif = /\{\{ANNEE_SESSION\}\}|\{\{ANNEE\}\}|\{\{ANCIENNETE\}\}/g;
+            const remplacer = racine => {
+                const marcheur = document.createTreeWalker(racine, NodeFilter.SHOW_TEXT);
+                const noeuds = [];
+                while (marcheur.nextNode()) noeuds.push(marcheur.currentNode);
+                noeuds.forEach(noeud => { noeud.nodeValue = noeud.nodeValue.replace(motif, jeton => jetons[jeton]); });
+            };
+            if (document.body) remplacer(document.body);
+            document.title = document.title.replace(motif, jeton => jetons[jeton]);
+        })();
+
+        // Défilement fluide (Smooth scroll)
+        function defilerVersSection(idSection) {
+            const element = document.getElementById(idSection);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth' });
+                document.getElementById('liensNavigation').classList.remove('actif');
+            }
+        }
+
+        function defilerVersLeHaut() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Basculer le menu mobile (ajouté pour que ton bouton fonctionne)
+        function basculerMenu() {
+            const liensNav = document.getElementById('liensNavigation');
+            liensNav.classList.toggle('actif');
+        }
+
+        // ============================================================
+        //  SOUMISSION DU FORMULAIRE → TELEGRAM BOT
+        // ============================================================
+// Le token Telegram est conservé uniquement côté serveur dans TELEGRAM_BOT_TOKEN.
+        const TELEGRAM_BOT_TOKEN = '';
+        const TELEGRAM_API_URL = '';
+
+        // Récupère le chat_id de l'admin au premier appel (getUpdates)
+        async function obtenirChatId() {
+            try {
+                const rep = await fetch(`${TELEGRAM_API_URL}/getUpdates`);
+                const data = await rep.json();
+                if (data.ok && data.result && data.result.length > 0) {
+                    // Prend le chat_id du dernier message reçu
+                    const dernier = data.result[data.result.length - 1];
+                    return dernier.message?.chat?.id || dernier.channel_post?.chat?.id || null;
+                }
+            } catch (e) { /* silencieux */ }
+            return null;
+        }
+
+        async function envoyerMessageTelegram(texte) {
+            let chatId = await obtenirChatId();
+            if (!chatId) {
+                // Fallback : essaie avec un offset à 0 (cas où aucun message n'a encore été envoyé)
+                console.warn('⚠️ Aucun chat_id trouvé. Envoie d\'abord un message au bot Telegram pour l\'activer.');
+                return false;
+            }
+            const rep = await fetch(`${TELEGRAM_API_URL}/sendMessage`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    chat_id: chatId,
+                    text: texte,
+                    parse_mode: 'HTML'
+                })
+            });
+            const data = await rep.json();
+            return data.ok;
+        }
+
+        // ============================================================
+        //  WHATSAPP — LA DEMANDE D'INSCRIPTION PART VERS WHATSAPP
+        // ============================================================
+        // Numéro du propriétaire du lien WhatsApp, au format international :
+        // indicatif +225 (Côte d'Ivoire) suivi du numéro local 01 73 04 55 19.
+        // wa.me exige ce format : ni « + », ni espace, ni parenthèse.
+        const NUMERO_WHATSAPP_INSCRIPTION = '2250173045519';
+
+        // Texte complet (toutes les infos saisies) qui sera pré-rempli dans WhatsApp.
+        function construireTexteWhatsApp(donnees) {
+            const dateHeure = new Date().toLocaleString('fr-FR', { timeZone: 'Africa/Abidjan' });
+            return [
+                '📋 *NOUVELLE DEMANDE D\'INSCRIPTION — GROUPE GTA*',
+                '',
+                '👤 *Prénom :* ' + (donnees.prenom || 'Non renseigné'),
+                '👤 *Nom :* ' + (donnees.nom || 'Non renseigné'),
+                '📚 *Classe visée :* ' + (donnees.classe || 'Non renseignée'),
+                '📞 *Téléphone :* ' + (donnees.telephone || 'Non renseigné'),
+                '📧 *Email :* ' + (donnees.email || 'Non renseigné'),
+                '💬 *Message :* ' + (donnees.message || 'Aucun message'),
+                '',
+                '🕐 _Envoyé le ' + dateHeure + '_'
+            ].join('\n');
+        }
+
+        // Lien wa.me avec le message pré-rempli : c'est ce lien qui est « derrière » le bouton.
+        function construireLienWhatsApp(donnees) {
+            return 'https://wa.me/' + NUMERO_WHATSAPP_INSCRIPTION + '?text=' + encodeURIComponent(construireTexteWhatsApp(donnees));
+        }
+
+        // Ouvre WhatsApp avec toutes les informations saisies.
+        // Renvoie le lien utilisé, ou '' si rien n'a pu être ouvert.
+        // À appeler pendant le clic de l'utilisateur, jamais après un await.
+        function ouvrirWhatsAppInscription(donnees) {
+            const lien = construireLienWhatsApp(donnees);
+            const lienSecours = document.getElementById('lienSecoursWhatsApp');
+            const blocSecours = document.getElementById('blocSecoursWhatsApp');
+            // Le lien de secours porte exactement la même demande : si le
+            // navigateur bloque l'ouverture automatique, un simple clic suffit.
+            if (lienSecours) lienSecours.href = lien;
+            if (blocSecours) blocSecours.hidden = false;
+            try {
+                const ancre = document.createElement('a');
+                ancre.href = lien;
+                ancre.target = '_blank';
+                ancre.rel = 'noopener noreferrer';
+                document.body.appendChild(ancre);
+                ancre.click();
+                ancre.remove();
+                return lien;
+            } catch (erreur) {
+                console.warn('[GTA] Ouverture de WhatsApp impossible :', erreur);
+                return '';
+            }
+        }
+
+        async function gererSoumissionFormulaire(evenement) {
+            evenement.preventDefault();
+            const form = evenement.target;
+            const btnSoumission = form.querySelector('.soumission-formulaire');
+
+            // Récupération des données du formulaire
+            const prenom   = form.querySelector('#prenom')?.value.trim()    || '';
+            const nom      = form.querySelector('#nom')?.value.trim()       || '';
+            const classe   = form.querySelector('#classe')?.value           || '';
+            const telephone= form.querySelector('#telephone')?.value.trim() || '';
+            const email    = form.querySelector('#email')?.value.trim()     || 'Non renseigné';
+            const message  = form.querySelector('#message')?.value.trim()   || 'Aucun message';
+
+            // 1) WhatsApp d'abord : toutes les infos saisies partent sur le
+            //    WhatsApp du propriétaire du lien (immédiat, pendant le clic).
+            const lienWhatsApp = ouvrirWhatsAppInscription({ prenom, nom, classe, telephone, email, message });
+
+            // Construction du message Telegram
+            const date = new Date().toLocaleString('fr-FR', { timeZone: 'Africa/Abidjan' });
+            const texteMessage =
+`📋 <b>NOUVELLE INSCRIPTION — GROUPE GTA</b>
+
+👤 <b>Prénom :</b> ${prenom}
+👤 <b>Nom :</b> ${nom}
+📚 <b>Classe visée :</b> ${classe}
+📞 <b>Téléphone :</b> ${telephone}
+📧 <b>Email :</b> ${email}
+💬 <b>Message :</b> ${message}
+
+🕐 <i>Reçu le ${date}</i>`;
+
+            // État "envoi en cours"
+            btnSoumission.disabled = true;
+            btnSoumission.textContent = '⏳ Envoi en cours…';
+            btnSoumission.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
+
+            try {
+                const ok = await envoyerMessageTelegram(texteMessage);
+                if (ok) {
+                    btnSoumission.textContent = '✅ Demande envoyée sur WhatsApp !';
+                    btnSoumission.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+                    form.reset();
+                } else {
+                    throw new Error('Réponse Telegram non ok');
+                }
+            } catch (err) {
+                console.error('Erreur Telegram :', err);
+                // La demande est déjà partie sur WhatsApp : on le dit clairement.
+                btnSoumission.textContent = lienWhatsApp
+                    ? '📲 Demande ouverte dans WhatsApp — pensez à l\'envoyer'
+                    : '⚠️ Erreur — Veuillez appeler le 01 73 04 55 19';
+                btnSoumission.style.background = lienWhatsApp
+                    ? 'linear-gradient(135deg, #25d366, #128c7e)'
+                    : 'linear-gradient(135deg, #ef4444, #b91c1c)';
+            }
+
+            setTimeout(() => {
+                btnSoumission.disabled = false;
+                btnSoumission.textContent = 'Envoyer ma demande d\'inscription →';
+                btnSoumission.style.background = '';
+            }, 5000);
+        }
+
+        // Effet au défilement de la barre de navigation
+        window.addEventListener('scroll', function() {
+            const barreNavigation = document.getElementById('barreNavigation');
+            const btnDefilementHaut = document.getElementById('btnDefilementHaut');
+            
+            if (window.scrollY > 50) {
+                barreNavigation.classList.add('defile');
+            } else {
+                barreNavigation.classList.remove('defile');
+            }
+
+            if (window.scrollY > 600) {
+                btnDefilementHaut.classList.add('visible');
+            } else {
+                btnDefilementHaut.classList.remove('visible');
+            }
+        });
+
+        // Créer les particules flottantes
+        function creerParticules() {
+            const conteneur = document.getElementById('particules');
+            const nombreParticules = 20;
+            
+            for (let i = 0; i < nombreParticules; i++) {
+                const particule = document.createElement('div');
+                particule.classList.add('particule');
+                particule.style.left = Math.random() * 100 + '%';
+                particule.style.animationDelay = Math.random() * 15 + 's';
+                particule.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                particule.style.opacity = Math.random() * 0.5 + 0.2;
+                conteneur.appendChild(particule);
+            }
+        }
+
+        creerParticules();
+
+        // Intersection Observer pour les animations d'apparition
+        const optionsObservateur = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observateur = new IntersectionObserver((entrees) => {
+            entrees.forEach(entree => {
+                if (entree.isIntersecting) {
+                    entree.target.style.opacity = '1';
+                    entree.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, optionsObservateur);
+
+        document.querySelectorAll('.pilier, .carte-resultat, .carte-contact, .service, .statistique').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+            observateur.observe(el);
+        });
+    </script>
+    <script src="gta-cloud.js?v=20260930-6"></script>
+</body>
+</html>

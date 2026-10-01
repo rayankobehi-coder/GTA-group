@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GTA - Connexion</title>
+    <link rel="icon" href="../Image/logo.jpg" type="image/jpeg">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #000000;
+            background-image: linear-gradient(rgba(0, 0, 0, 0.48), rgba(0, 0, 0, 0.62)), url('Fond2.JPG');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            overflow: hidden;
+            font-family: 'Poppins', sans-serif;
+            perspective: 1000px;
+        }
+
+        /* --- ARRIÈRE-PLAN CANVAS (vagues) --- */
+        #waveCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* --- WRAPPER 3D --- */
+        .form-wrapper {
+            position: relative;
+            z-index: 2;
+            transform: rotateX(6deg) rotateY(-3deg);
+            transform-style: preserve-3d;
+            transition: transform 0.5s ease;
+        }
+
+        .form-wrapper:hover {
+            transform: rotateX(0deg) rotateY(0deg);
+        }
+
+        /* --- CONTENEUR PRINCIPAL --- */
+        .form-container {
+            background: rgba(18, 18, 20, 0.45);
+            backdrop-filter: blur(30px) saturate(150%);
+            -webkit-backdrop-filter: blur(30px) saturate(150%);
+            padding: 40px 40px 50px 40px;
+            width: 460px;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow:
+                0 40px 80px rgba(0, 0, 0, 0.7),
+                0 0 0 1px rgba(255, 255, 255, 0.03),
+                inset 0 0 30px rgba(255, 255, 255, 0.02);
+            position: relative;
+        }
+
+        /* --- BADGE LOGO --- */
+        .header-badge {
+            width: 112px;
+            height: 112px;
+            background: radial-gradient(circle at top, #1c1c1f 0%, #0f0f10 65%, #090909 100%);
+            border: 3px solid #ff2a2a;
+            border-radius: 50%;
+            margin: -90px auto 18px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow:
+                0 18px 35px rgba(0, 0, 0, 0.55),
+                0 0 0 1px rgba(255, 255, 255, 0.03),
+                0 0 25px rgba(230, 0, 0, 0.18);
+            overflow: hidden;
+            padding: 6px;
+        }
+
+        .header-badge img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            border-radius: 50%;
+        }
+
+        h2 {
+            color: #ffffff;
+            text-align: center;
+            font-size: 1.9rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .subtitle {
+            color: #8a898e;
+            text-align: center;
+            font-size: 0.9rem;
+            font-weight: 400;
+            margin-bottom: 32px;
+        }
+
+        /* --- MESSAGE D'ERREUR --- */
+        .error-msg {
+            display: none;
+            background: rgba(230, 0, 0, 0.12);
+            border: 1px solid rgba(230, 0, 0, 0.35);
+            color: #ff6b6b;
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 13px;
+            margin-bottom: 20px;
+            text-align: center;
+            animation: slideIn 0.3s ease;
+        }
+
+        .error-msg.visible {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-8px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- CHAMPS DE SAISIE --- */
+        .input-group {
+            position: relative;
+            margin-bottom: 25px;
+        }
+
+        .input-group svg {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            fill: #666;
+            transition: 0.3s ease;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 15px 20px 15px 52px;
+            background: rgba(10, 10, 12, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            border-radius: 12px;
+            outline: none;
+            color: #fff;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .input-group label {
+            position: absolute;
+            left: 52px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #777;
+            pointer-events: none;
+            transition: 0.3s ease;
+        }
+
+        .input-group input:focus ~ label,
+        .input-group input:valid ~ label {
+            top: -10px;
+            left: 15px;
+            font-size: 11px;
+            color: #ff3b30;
+            background: #161517;
+            padding: 2px 8px;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .input-group input:focus {
+            border-color: rgba(230, 0, 0, 0.4);
+            box-shadow: 0 0 15px rgba(230, 0, 0, 0.1);
+            background: rgba(10, 10, 12, 0.8);
+        }
+
+        .input-group input:focus + label ~ svg,
+        .input-group input:focus ~ svg {
+            fill: #e60000;
+        }
+
+        /* icône svg en focus : sélecteur correct */
+        .input-group input:focus ~ svg { fill: #e60000; }
+
+        /* --- BOUTON CONNEXION --- */
+        #btnConnexion {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #e60000 0%, #990000 100%);
+            border: none;
+            outline: none;
+            border-radius: 12px;
+            color: #ffffff;
+            font-size: 15px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(230, 0, 0, 0.25);
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        #btnConnexion:hover {
+            background: linear-gradient(135deg, #ff1a1a 0%, #b30000 100%);
+            box-shadow: 0 12px 30px rgba(230, 0, 0, 0.4);
+            transform: translateY(-1px);
+        }
+
+        #btnConnexion:active {
+            transform: translateY(1px);
+        }
+
+        #btnConnexion:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* --- LIENS FOOTER --- */
+        .form-footer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+            font-size: 13px;
+        }
+
+        .form-footer a {
+            color: #6c6b70;
+            text-decoration: none;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        .form-footer a:hover {
+            color: #ffffff;
+        }
+
+        .home-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: #ffffff !important;
+            background: rgba(230, 0, 0, 0.14);
+            border: 1px solid rgba(230, 0, 0, 0.35);
+            border-radius: 8px;
+            padding: 6px 10px;
+            transition: all 0.3s ease;
+        }
+
+        .home-link:hover {
+            background: rgba(230, 0, 0, 0.28);
+            border-color: rgba(255, 70, 70, 0.7);
+            transform: translateY(-1px);
+        }
+
+        /* --- MODAL MOT DE PASSE OUBLIÉ --- */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.75);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(6px);
+        }
+
+        .modal-overlay.visible {
+            display: flex;
+        }
+
+        .modal-box {
+            background: rgba(20, 20, 25, 0.95);
+            border: 1px solid rgba(230, 0, 0, 0.3);
+            border-radius: 20px;
+            padding: 40px 36px;
+            max-width: 380px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), 0 0 40px rgba(230, 0, 0, 0.1);
+            animation: popIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to   { opacity: 1; transform: scale(1); }
+        }
+
+        .modal-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .modal-box h3 {
+            color: #ffffff;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .modal-box p {
+            color: #8a898e;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .modal-phone {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(230, 0, 0, 0.1);
+            border: 1px solid rgba(230, 0, 0, 0.3);
+            border-radius: 12px;
+            padding: 14px 24px;
+            color: #ff6b6b;
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .modal-phone:hover {
+            background: rgba(230, 0, 0, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(230, 0, 0, 0.25);
+        }
+
+        .modal-close {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #777;
+            padding: 10px 28px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 13px;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.07);
+            color: #fff;
+        }
+
+        /* --- SPINNER --- */
+        .spinner {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Responsive */
+        @media (max-width: 500px) {
+            .form-container { width: 92vw; padding: 30px 20px 40px; }
+        }
+
+        /* ======================================
+           ADAPTATION AUX ÉCRANS
+           Tout est dans des @media : l'affichage ordinateur est inchangé.
+           ====================================== */
+        img {
+            max-width: 100%;
+        }
+
+        @media (max-width: 500px) {
+            /* Ceinture et bretelles : la carte ne peut jamais dépasser l'écran. */
+            .form-container { max-width: 92vw; }
+        }
+
+        @media (max-width: 380px) {
+            /* Très petits téléphones : on récupère de la place utile. */
+            .form-container { padding: 24px 16px 32px; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="waveCanvas"></canvas>
+
+    <div class="form-wrapper">
+        <div class="form-container">
+
+            <div class="header-badge">
+                <img src="../Image/logo.jpg" alt="Logo GTA">
+            </div>
+
+            <h2>CONNEXION</h2>
+            <div class="subtitle">Groupe GTA — Excellence &amp; Réussite Scolaire</div>
+
+            <div class="error-msg" id="msgErreur" role="alert">
+                ❌ Identifiant ou mot de passe incorrect.
+            </div>
+
+            <form id="formConnexion" onsubmit="gererConnexion(event)" novalidate>
+                <div class="input-group">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12,4A4,4 0 0,1 16,8A4,4 0 0,1 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,14C16.42,14 20,15.79 20,18V20H4V18C4,15.79 7.58,14 12,14Z"/>
+                    </svg>
+                    <input type="text" id="username" name="username" required autocomplete="username">
+                    <label for="username">Nom d'utilisateur</label>
+                </div>
+
+                <div class="input-group">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12,17A2,2 0 0,0 14,15C14,13.89 13.1,13 12,13A2,2 0 0,0 10,15A2,2 0 0,0 12,17M18,8A2,2 0 0,1 20,10V20A2,2 0 0,1 18,22H6A2,2 0 0,1 4,20V10C4,8.89 4.9,8 6,8H7V6A5,5 0 0,1 12,1A5,5 0 0,1 17,6V8H18M12,3A3,3 0 0,0 9,6V8H15V6A3,3 0 0,0 12,3Z"/>
+                    </svg>
+                    <input type="password" id="password" name="password" required autocomplete="current-password">
+                    <label for="password">Mot de passe</label>
+                </div>
+
+                <button type="submit" id="btnConnexion">Se connecter</button>
+
+                <div class="form-footer">
+                    <a href="../index.html" class="home-link" aria-label="Retourner à l'accueil"><span aria-hidden="true">⌂</span> Accueil</a>
+                    <a id="lienMdpOublie" onclick="ouvrirModalMdp()" tabindex="0">Mot de passe oublié ?</a>
+                    <a href="../index.html#inscription">S'inscrire</a>
+                </div>
+            </form>
+
+        </div>
+    </div>
+
+    <!-- ===== MODAL MOT DE PASSE OUBLIÉ ===== -->
+    <div class="modal-overlay" id="modalMdp" role="dialog" aria-modal="true" aria-label="Mot de passe oublié">
+        <div class="modal-box">
+            <div class="modal-icon">🔐</div>
+            <h3>Mot de passe oublié ?</h3>
+            <p>
+                Contactez directement l'administrateur du Groupe GTA pour réinitialiser votre accès.
+                Il vous aidera immédiatement.
+            </p>
+            <a class="modal-phone" href="tel:0173045519">
+                📞 01 73 04 55 19
+            </a>
+            <br>
+            <button class="modal-close" onclick="fermerModalMdp()">Fermer</button>
+        </div>
+    </div>
+
+    <script>
+        /* =====================================================
+           REPLI LOCAL (côté client)
+           L'authentification réelle est faite par le serveur via
+           /api/auth/login (voir gta-cloud.js, qui remplace
+           window.gererConnexion). Cette liste ne sert que si le
+           script cloud n'a pas pu être chargé.
+           Les mots de passe doivent rester alignés sur DEFAULT_USERS
+           dans api/[...route].js, sinon la connexion échoue toujours
+           (avant correction, les quatre valaient `null` et AUCUN mot
+           de passe ne pouvait correspondre).
+        ===================================================== */
+        const UTILISATEURS = [
+            // ── Admin absolu ──────────────────────────────────
+            { id: 'ceejay',  mdp: 'yajeec',   role: 'admin',  page: 'CEEJAY.html' },
+            // ── Admin secondaire (Le père) ────────────────────
+            { id: 'lepere',  mdp: 'peregta',  role: 'parent', page: 'lepere.html' },
+            // ── Comptes de démonstration ──────────────────────
+            { id: 'eleve1',  mdp: 'eleve123', role: 'eleve',  page: 'élève.html' },
+            { id: 'prof1',   mdp: 'prof123',  role: 'prof',   page: 'prof.html' },
+        ];
+
+        /* =====================================================
+           AUTHENTIFICATION + REDIRECTION
+        ===================================================== */
+        function gererConnexion(e) {
+            e.preventDefault();
+
+            const identifiant = document.getElementById('username').value.trim().toLowerCase();
+            const motDePasse  = document.getElementById('password').value;
+            const msgErreur   = document.getElementById('msgErreur');
+            const btn         = document.getElementById('btnConnexion');
+
+            // Masquer l'erreur précédente
+            msgErreur.classList.remove('visible');
+
+            // Spinner de chargement
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner"></span> Vérification…';
+
+            // Simulation d'un délai réseau (300 ms)
+            setTimeout(() => {
+                const utilisateur = UTILISATEURS.find(
+                    u => u.id === identifiant && u.mdp === motDePasse
+                );
+
+                if (utilisateur) {
+                    // Sauvegarde de la session (sessionStorage)
+                    sessionStorage.setItem('gta_user', JSON.stringify({
+                        id:   utilisateur.id,
+                        role: utilisateur.role
+                    }));
+
+                    btn.innerHTML = '✅ Connexion réussie — Redirection…';
+                    btn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+
+                    // Redirection vers le bon tableau de bord
+                    setTimeout(() => {
+                        window.location.href = utilisateur.page;
+                    }, 800);
+
+                } else {
+                    // Échec
+                    msgErreur.classList.add('visible');
+                    btn.disabled = false;
+                    btn.innerHTML = 'Se connecter';
+                    btn.style.background = '';
+
+                    // Animation de secousse sur les champs
+                    ['username', 'password'].forEach(id => {
+                        const input = document.getElementById(id);
+                        input.style.borderColor = 'rgba(230, 0, 0, 0.6)';
+                        input.style.animation = 'shake 0.4s ease';
+                        setTimeout(() => {
+                            input.style.animation = '';
+                            input.style.borderColor = '';
+                        }, 500);
+                    });
+                }
+            }, 300);
+        }
+
+        /* =====================================================
+           MODAL MOT DE PASSE OUBLIÉ
+        ===================================================== */
+        function ouvrirModalMdp() {
+            document.getElementById('modalMdp').classList.add('visible');
+        }
+
+        function fermerModalMdp() {
+            document.getElementById('modalMdp').classList.remove('visible');
+        }
+
+        // Fermer en cliquant sur l'overlay
+        document.getElementById('modalMdp').addEventListener('click', function(e) {
+            if (e.target === this) fermerModalMdp();
+        });
+
+        // Fermer avec la touche Échap
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') fermerModalMdp();
+        });
+
+        /* =====================================================
+           ANIMATION CANVAS — VAGUES (rouge / bleu / noir)
+        ===================================================== */
+        const canvas = document.getElementById('waveCanvas');
+        const ctx    = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width  = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        const waves = [
+            { y: canvas.height * 0.68, length: 0.0018, amplitude: 50, speed: 0.006, color: 'rgba(16, 28, 54, 0.45)',  phase: 0   },
+            { y: canvas.height * 0.73, length: 0.0012, amplitude: 65, speed: 0.004, color: 'rgba(230, 0, 0, 0.22)',   phase: 150 },
+            { y: canvas.height * 0.79, length: 0.0022, amplitude: 45, speed: 0.009, color: 'rgba(12, 11, 14, 0.75)',  phase: 300 },
+            { y: canvas.height * 0.84, length: 0.0028, amplitude: 35, speed: 0.005, color: 'rgba(179, 18, 18, 0.35)', phase: 80  }
+        ];
+
+        function animate() {
+            requestAnimationFrame(animate);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            waves.forEach(wave => {
+                ctx.beginPath();
+                ctx.moveTo(0, canvas.height);
+
+                for (let x = 0; x < canvas.width; x++) {
+                    const y = wave.y
+                        + Math.sin(x * wave.length + wave.phase) * wave.amplitude
+                        + Math.cos(x * 0.0008 + wave.phase) * (wave.amplitude * 0.25);
+                    ctx.lineTo(x, y);
+                }
+
+                ctx.lineTo(canvas.width, canvas.height);
+                ctx.fillStyle = wave.color;
+                ctx.fill();
+
+                wave.phase += wave.speed;
+            });
+        }
+
+        animate();
+
+        /* Redimensionner les vagues au resize */
+        window.addEventListener('resize', () => {
+            waves.forEach((w, i) => {
+                const ratios = [0.68, 0.73, 0.79, 0.84];
+                w.y = canvas.height * ratios[i];
+            });
+        });
+
+        /* Animation shake CSS dynamique */
+        const shakeStyle = document.createElement('style');
+        shakeStyle.textContent = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                20%       { transform: translateX(-8px); }
+                40%       { transform: translateX(8px); }
+                60%       { transform: translateX(-5px); }
+                80%       { transform: translateX(5px); }
+            }
+        `;
+        document.head.appendChild(shakeStyle);
+    </script>
+        <script src="../gta-cloud.js?v=20260930-6"></script>
+</body>
+</html>

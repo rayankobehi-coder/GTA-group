@@ -1,0 +1,88 @@
+Cahier des charges – Système de gestion automatisée pour une structure d’encadrement
+1. Bot Telegram d’inscription
+Token du bot : 8672835698:AAE5XG2wSh8DSTWAc32ncYhf-WR-eMJ_yNk
+
+Fonctionnement :
+
+Sur la page accueil.html, un formulaire d’inscription est affiché.
+
+Lorsque l’utilisateur remplit tous les champs et clique sur « Envoyer ma demande d’inscription », les données saisies sont automatiquement envoyées sur votre compte Telegram via l’API HTTP du bot.
+
+Un bouton « Appeler maintenant » doit être présent sur la page. Au clic, il propose d’appeler directement le numéro 01 73 04 55 19.
+
+2. Page de connexion (formulaire.html)
+L’utilisateur saisit un nom d’utilisateur et un mot de passe.
+
+En fonction de sa catégorie (rôle défini par l’administrateur), il est redirigé automatiquement vers le tableau de bord qui lui correspond :
+
+Élève → élèvé.html
+
+Professeur → prof.html
+
+Parent (le père) → lepere.html
+
+Administrateur absolu → CEEJAY.html
+
+En cas de mot de passe oublié, le numéro 01 73 04 55 19 s’affiche pour permettre à l’utilisateur de vous appeler.
+
+3. Base de données et back-end
+Une base de données (à créer) stockera toutes les informations : utilisateurs, rôles, documents, logs, etc.
+
+Le fichier principal de l’administrateur absolu se nomme CEEJAY.html (ou un back-end associé).
+
+Administrateur absolu :
+
+Identifiant : ceejay
+
+Mot de passe : yajeec
+
+Droits : accès total à toutes les données et fonctionnalités (consultation, modification, suppression, gestion des utilisateurs).
+
+Tableau de bord : aperçu en temps réel du nombre total d’utilisateurs par serveur/base, du nombre total d’élèves inscrits, et de toute autre statistique pertinente. Tous les éléments visibles sur le dashboard doivent être fonctionnels automatiquement (mise à jour dynamique depuis la base de données).
+
+4. Tableaux de bord utilisateurs (lepere.html, élèvé.html, prof.html)
+Ces pages sont construites sur le même modèle que le dashboard de l’administrateur absolu.
+
+L’accès se fait par identifiant et mot de passe :
+
+Parent : ID lepere / mot de passe peregta → redirige vers lepere.html
+
+Pour les autres rôles (élève, professeur), l’identifiant et le mot de passe saisis déterminent directement la page correspondante, en fonction du rôle attribué par l’administrateur absolu lors de la création du compte.
+
+Personnalisation : chaque utilisateur peut modifier et personnaliser son propre espace. Toute modification effectuée par un utilisateur (y compris l’administrateur absolu) doit être sauvegardée et appliquée à son tableau de bord.
+
+5. Liaison entre les pages et propagation des modifications
+Toutes les pages du système (accueil.html, formulaire.html, CEEJAY.html, lepere.html, élèvé.html, prof.html) sont reliées dynamiquement.
+
+Les modifications apportées par l’administrateur (par exemple changement de rôle, ajout de contenu, paramètres généraux) doivent se répercuter partout où c’est pertinent.
+
+Les actions de chaque utilisateur (mise à jour de profil, dépôt de documents, etc.) doivent être centralisées et accessibles selon les droits.
+
+6. Base de données complète et fonctionnalités additionnelles
+Vous avez « carte blanche » pour concevoir la base de données, à condition de couvrir les besoins suivants :
+
+Stockage des utilisateurs : identifiants, mots de passe (hachés), rôles, métadonnées, permissions.
+
+Gestion des documents et fichiers : possibilité pour les utilisateurs de téléverser des fichiers (cours, devoirs, supports) et de les télécharger ultérieurement.
+
+Création de comptes : lorsque l’administrateur absolu crée un nouvel utilisateur, celui-ci est enregistré en base et peut se connecter immédiatement.
+
+Optimisation du site : performances, sécurité (protection des mots de passe, sessions), interface réactive.
+
+Tout élément manquant pour que le site soit parfait doit être ajouté (par exemple : système de notifications, gestion des compétences des élèves, suivi des activités, etc.). L’objectif final est une plateforme complète d’encadrement et de gestion automatisée des élèves et de leurs compétences.
+
+Résumé technique :
+Il s’agit de développer une application web avec :
+
+Un front-end composé des pages accueil.html, formulaire.html, CEEJAY.html, lepere.html, élèvé.html, prof.html.
+
+Un back-end connecté à une base de données (SQL ou NoSQL) pour gérer l’authentification, les rôles, le stockage de fichiers et les statistiques.
+
+Un bot Telegram intégré pour réceptionner les inscriptions.
+
+Un mécanisme de redirection automatique après connexion basé sur le rôle.
+
+Une synchronisation des données entre les différentes pages et utilisateurs.
+
+Toutes les informations ci-dessus doivent être prises en compte pour réaliser l’automatisation complète demandée.
+donne uje focntionalité a tout ce que tu vois que je n'ai pas citer dans le prompt comme les cloche de notif etc 

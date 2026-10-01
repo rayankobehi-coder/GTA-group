@@ -1,0 +1,24 @@
+
+> **Rôle :** Agis en tant qu'expert développeur Front-End spécialisé en design institutionnel.
+> **Tâche :** Crée une page web unique (HTML/CSS fusionnés) pour la structure d'encadrement scolaire **Groupe GTA** en utilisant exclusivement les fichiers fournis dans le ZIP joint.
+> **Directives de Design & Couleurs :**
+>  * Palette : Noir, Rouge (#FF0000), Bleu (#0044FF) et Blanc.
+>  * Style : Professionnel, épuré, avec des effets de "Glassmorphism" (transparence floutée) pour les cartes sur images.
+>  * Typographie : Sans-Serif moderne (Segoe UI ou Arial).
+> **Structure de la page (Respecter cet ordre) :**
+>  1. **Navbar :** Logo à gauche (utiliser Image/logo.JPG), liens à droite.
+>  2. **Marquee :** Bandeau noir défilant vers la gauche avec le texte : "Les inscriptions au PREPABAC 2026 ont débuté et se poursuivent tous les jours. Contactez-nous : 01 02 72 40 94 / 01 02 50 69 52".
+>  3. **Hero Section :** Image de fond (Image/Fond.JPG). Au centre, une carte arrondie contenant le texte de Texte/Gta des.txt.
+>  4. **Section Responsable :** Layout 2 colonnes. Gauche : Image Image/Andre.JPG avec une bordure stylisée bleue. Droite : Titre "Docteur Pierre André Guinan" et le contenu de Texte/Andredes.txt.
+>  5. **Section Résultats :** Titre "Nos Performances", texte de présentation, et affichage de l'image Image/Résultat .JPG.
+>  6. **Section Motivation :** Utiliser Image/Fond2.JPG en arrière-plan avec un overlay sombre. Afficher le texte de Texte/Motives.txt centré avec un bouton "S'INSCRIRE".
+>  7. **Footer :** Fond noir. Afficher les contacts (0173045519 / 0102724094), l'email (rayankobehi@gmail.com) et la localisation (EPP Municipal 1 et 2 face au Lycée Sainte Marie de Cocody).
+> **Contraintes Techniques :**
+>  * Le CSS doit être dans une balise <style> dans le <head>.
+>  * La page doit être "Responsive" (doit s'afficher correctement sur téléphone).
+>  * Respecte scrupuleusement les chemins de fichiers relatifs (ex: Image/Fond.JPG) pour que le site fonctionne dès l'extraction du ZIP.
+> 
+### Pourquoi ce prompt est efficace :
+ 1. **Précision des chemins :** J'ai vérifié l'arborescence de ton ZIP. En utilisant ce prompt, l'IA sait exactement qu'elle doit chercher Image/Andre.JPG et non andre.jpg.
+ 2. **Hiérarchie visuelle :** Il définit exactement quel texte va sur quelle image.
+ 3. **Appel à l'action :** Il force l'ajout du bouton d'inscription pour rendre le site utile.

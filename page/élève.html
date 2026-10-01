@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Espace Élève - GTA</title>
+    <link rel="icon" href="../Image/logo.jpg" type="image/jpeg">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        :root {
+            --rouge: #d30000;
+            --rouge-hover: #ff1a1a;
+            --rouge-glow: rgba(211, 0, 0, 0.35);
+            --bleu: #3b82f6;
+            --bleu-dark: #1e3a8a;
+            --bleu-glow: rgba(59, 130, 246, 0.25);
+            --noir: #0a0a0a;
+            --noir-card: rgba(0, 0, 0, 0.65);
+            --noir-input: #0f1219;
+            --border: rgba(59, 130, 246, 0.3);
+            --border-rouge: rgba(211, 0, 0, 0.4);
+            --text-primary: #ffffff;
+            --text-secondary: #cbd5e6;
+            --text-muted: #8a8a8a;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --radius: 28px;
+            --radius-sm: 20px;
+            --radius-xs: 12px;
+            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            background-image: url('Fond.JPG');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            position: relative;
+            min-height: 100vh;
+            color: var(--text-primary);
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at 20% 20%, rgba(211, 0, 0, 0.08), transparent 50%),
+                        radial-gradient(ellipse at 80% 80%, rgba(59, 130, 246, 0.06), transparent 50%),
+                        radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.78), rgba(0, 0, 0, 0.92));
+            z-index: 0;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                radial-gradient(1px 1px at 10% 20%, rgba(211, 0, 0, 0.3), transparent),
+                radial-gradient(1px 1px at 30% 60%, rgba(59, 130, 246, 0.2), transparent),
+                radial-gradient(1px 1px at 70% 30%, rgba(255, 255, 255, 0.1), transparent),
+                radial-gradient(1px 1px at 90% 80%, rgba(211, 0, 0, 0.2), transparent),
+                radial-gradient(1px 1px at 50% 90%, rgba(59, 130, 246, 0.15), transparent);
+            z-index: 0;
+            pointer-events: none;
+            animation: floatParticles 20s linear infinite;
+        }
+
+        @keyframes floatParticles {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        .container {
+            position: relative;
+            z-index: 2;
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 20px 30px;
+        }
+
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--rouge); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--rouge-hover); }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding: 18px 24px;
+            margin-bottom: 30px;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: var(--radius);
+            border: 1px solid rgba(211, 0, 0, 0.15);
+        }
+
+        .logo-section { display: flex; align-items: center; gap: 16px; }
+
+        .logo-circle {
+            width: 52px; height: 52px;
+            border: 2px solid var(--rouge);
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: 0 0 18px var(--rouge-glow), inset 0 0 8px rgba(211, 0, 0, 0.1);
+            flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(0, 0, 0, 0.6);
+            transition: var(--transition);
+        }
+        .logo-circle:hover { box-shadow: 0 0 28px var(--rouge-glow); transform: scale(1.05); }
+        .logo-circle img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+
+        .site-title h1 {
+            font-size: 1.4rem; font-weight: 800;
+            background: linear-gradient(135deg, #fff 0%, var(--bleu) 60%, var(--rouge) 100%);
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+            letter-spacing: -0.5px;
+        }
+        .site-title p {
+            font-size: 0.78rem; color: var(--text-muted);
+            border-left: 3px solid var(--rouge); padding-left: 8px; margin-top: 2px; font-weight: 500;
+        }
+
+        .user-section {
+            display: flex; align-items: center; gap: 16px;
+            background: rgba(0, 0, 0, 0.5); padding: 8px 18px;
+            border-radius: 50px; border: 1px solid rgba(211, 0, 0, 0.3);
+            transition: var(--transition);
+        }
+        .user-section:hover { border-color: rgba(211, 0, 0, 0.6); }
+
+        .user-avatar-header {
+            width: 36px; height: 36px; border-radius: 50%; overflow: hidden;
+            border: 2px solid var(--rouge); flex-shrink: 0; cursor: pointer;
+            transition: var(--transition); position: relative;
+        }
+        .user-avatar-header:hover { box-shadow: 0 0 12px var(--rouge-glow); }
+        .user-avatar-header img { width: 100%; height: 100%; object-fit: cover; }
+        .user-avatar-header .avatar-fallback {
+            width: 100%; height: 100%; background: linear-gradient(135deg, var(--rouge), var(--bleu));
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 800; font-size: 14px; color: white;
+        }
+
+        .user-info { display: flex; flex-direction: column; }
+        .user-info strong { font-size: 0.88rem; color: white; font-weight: 700; }
+        .user-info span { font-size: 0.7rem; color: var(--rouge); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        .logout-btn {
+            background: rgba(211, 0, 0, 0.1); border: 1px solid rgba(211, 0, 0, 0.25);
+            color: var(--rouge); cursor: pointer; display: flex; align-items: center; gap: 8px;
+            font-size: 0.82rem; transition: var(--transition); padding: 8px 16px;
+            border-radius: 50px; font-weight: 600; font-family: 'Inter', sans-serif;
+        }
+        .logout-btn:hover {
+            background: var(--rouge); color: white; border-color: var(--rouge);
+            transform: scale(0.97); box-shadow: 0 4px 20px var(--rouge-glow);
+        }
+
+        nav {
+            background: rgba(0, 0, 0, 0.55); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border-radius: 60px; display: flex; justify-content: space-between;
+            padding: 5px; margin-bottom: 36px; border: 1px solid var(--border);
+            flex-wrap: wrap; gap: 4px;
+        }
+        .nav-item {
+            flex: 1; text-align: center; padding: 12px 14px; color: #999; cursor: pointer;
+            border-radius: 50px; transition: var(--transition); font-weight: 600;
+            display: flex; justify-content: center; align-items: center; gap: 10px;
+            font-size: 0.85rem; min-width: 50px; position: relative;
+        }
+        .nav-item i { font-size: 1.05rem; }
+        .nav-item:hover { background: rgba(59, 130, 246, 0.12); color: white; }
+        .nav-item.active {
+            background: linear-gradient(135deg, rgba(211, 0, 0, 0.25), rgba(30, 58, 138, 0.2));
+            color: white; border: 1px solid rgba(211, 0, 0, 0.3);
+            box-shadow: 0 2px 16px rgba(211, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+        .nav-item.active::after {
+            content: ''; position: absolute; bottom: -1px; left: 50%; transform: translateX(-50%);
+            width: 20px; height: 3px; background: var(--rouge); border-radius: 10px;
+        }
+
+        .tab-content { display: none; animation: fadeSlide 0.35s ease-out; }
+        .tab-content.active { display: block; }
+        @keyframes fadeSlide {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .stats-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px; margin-bottom: 36px;
+        }
+        .stat-card {
+            background: rgba(0, 0, 0, 0.55); backdrop-filter: blur(12px);
+            border-radius: var(--radius); padding: 24px 22px; transition: var(--transition);
+            position: relative; overflow: hidden; cursor: pointer; border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        .stat-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+            border-radius: var(--radius) var(--radius) 0 0;
+        }
+        .stat-card:nth-child(1)::before { background: linear-gradient(90deg, var(--rouge), #ff6b6b); }
+        .stat-card:nth-child(2)::before { background: linear-gradient(90deg, var(--bleu), #60a5fa); }
+
+        .stat-card::after {
+            content: ''; position: absolute; top: -30%; right: -15%; width: 100px; height: 100px;
+            border-radius: 50%; opacity: 0.05;
+        }
+        .stat-card:nth-child(1)::after { background: var(--rouge); }
+        .stat-card:nth-child(2)::after { background: var(--bleu); }
+
+        .stat-card:hover { transform: translateY(-6px); box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4); border-color: rgba(255, 255, 255, 0.08); }
+
+        .stat-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+        .stat-icon { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 17px; }
+
+        .stat-card:nth-child(1) .stat-icon { background: rgba(211, 0, 0, 0.15); color: var(--rouge); }
+        .stat-card:nth-child(2) .stat-icon { background: rgba(59, 130, 246, 0.15); color: var(--bleu); }
+
+        .stat-trend { font-size: 0.72rem; font-weight: 700; padding: 3px 8px; border-radius: 20px; }
+        .stat-trend.up { color: var(--success); background: rgba(34, 197, 94, 0.1); }
+        .stat-trend.neutral { color: var(--warning); background: rgba(245, 158, 11, 0.1); }
+
+        .stat-card h3 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1.2px; color: var(--text-muted); margin-bottom: 4px; font-weight: 600; }
+        .stat-card .number { font-size: 2.4rem; font-weight: 900; line-height: 1.1; }
+
+        .stat-card:nth-child(1) .number { color: #ff6b6b; }
+        .stat-card:nth-child(2) .number { color: #60a5fa; }
+
+        .stat-card .stat-sub { font-size: 0.72rem; color: var(--text-muted); margin-top: 6px; }
+
+        .glass-panel {
+            background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border-radius: var(--radius); padding: 28px; margin-bottom: 28px;
+            border: 1px solid var(--border); transition: var(--transition);
+        }
+        .glass-panel:hover { border-color: rgba(59, 130, 246, 0.45); }
+        .panel-title {
+            font-size: 1.35rem; font-weight: 700; color: white; margin-bottom: 22px;
+            border-left: 4px solid var(--rouge); padding-left: 16px; display: flex; align-items: center; gap: 10px;
+        }
+        .panel-title i { color: var(--rouge); }
+
+        .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+        .form-group label { color: var(--text-secondary); font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        .form-group input, .form-group select, .form-group textarea {
+            background: var(--noir-input); border: 1px solid #2d3748; padding: 12px 16px;
+            border-radius: var(--radius-sm); color: white; outline: none; transition: var(--transition);
+            font-family: 'Inter', sans-serif; font-size: 0.9rem;
+        }
+        .form-group textarea { resize: vertical; min-height: 100px; }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--bleu); box-shadow: 0 0 0 3px var(--bleu-glow); }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--rouge), #b91c1c); border: none; padding: 14px 28px;
+            border-radius: 50px; font-weight: 700; font-size: 0.9rem; color: white;
+            display: inline-flex; align-items: center; gap: 10px; cursor: pointer; transition: var(--transition);
+            width: 100%; justify-content: center; font-family: 'Inter', sans-serif; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .btn-primary:hover { background: linear-gradient(135deg, var(--rouge-hover), var(--rouge)); transform: scale(0.98); box-shadow: 0 6px 24px var(--rouge-glow); }
+
+        .btn-secondary {
+            background: rgba(59, 130, 246, 0.12); border: 1px solid var(--border); padding: 12px 24px;
+            border-radius: 50px; font-weight: 600; font-size: 0.85rem; color: var(--bleu);
+            display: inline-flex; align-items: center; gap: 8px; cursor: pointer; transition: var(--transition);
+            font-family: 'Inter', sans-serif;
+        }
+        .btn-secondary:hover { background: rgba(59, 130, 246, 0.2); border-color: var(--bleu); }
+
+        .btn-danger {
+            background: rgba(211, 0, 0, 0.1); border: 1px solid rgba(211, 0, 0, 0.25); padding: 12px 24px;
+            border-radius: 50px; font-weight: 600; font-size: 0.85rem; color: var(--rouge);
+            cursor: pointer; transition: var(--transition); font-family: 'Inter', sans-serif; display: inline-flex; align-items: center; gap: 8px;
+        }
+        .btn-danger:hover { background: var(--rouge); color: white; box-shadow: 0 4px 16px var(--rouge-glow); }
+        .btn-sm { padding: 8px 16px; font-size: 0.78rem; }
+
+        .filters-bar { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
+        .search-box { flex: 1; min-width: 200px; position: relative; }
+        .search-box i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 14px; }
+        .search-box input {
+            width: 100%; padding: 11px 16px 11px 40px; background: var(--noir-input); border: 1px solid #2d3748;
+            border-radius: var(--radius-sm); color: white; font-family: 'Inter', sans-serif; font-size: 0.88rem; transition: var(--transition);
+        }
+        .search-box input:focus { outline: none; border-color: var(--bleu); box-shadow: 0 0 0 3px var(--bleu-glow); }
+
+        .doc-item, .suggestion-item {
+            display: flex; justify-content: space-between; align-items: center; background: rgba(0, 0, 0, 0.45);
+            padding: 14px 18px; border-radius: var(--radius-sm); margin-bottom: 10px; border: 1px solid rgba(255, 255, 255, 0.04); transition: var(--transition);
+        }
+        .doc-item:hover, .suggestion-item:hover { background: rgba(0, 0, 0, 0.55); border-color: var(--border); }
+        .doc-info, .suggestion-info { display: flex; align-items: center; gap: 12px; }
+        .doc-info i, .suggestion-info i { color: var(--bleu); font-size: 1.3rem; }
+        .doc-details strong, .suggestion-details strong { display: block; font-size: 0.88rem; }
+        .doc-details span, .suggestion-details span { font-size: 0.72rem; color: var(--text-muted); }
+        .doc-actions, .suggestion-actions { display: flex; gap: 6px; }
+
+        /* Envoi de documents : même fonctionnement que l'espace administrateur. */
+        .upload-zone {
+            border: 2px dashed rgba(59, 130, 246, 0.4); border-radius: var(--radius); padding: 44px 24px; text-align: center;
+            background: rgba(59, 130, 246, 0.03); margin-bottom: 28px; transition: var(--transition); cursor: pointer;
+        }
+        .upload-zone:hover, .upload-zone.dragover { border-color: var(--bleu); background: rgba(59, 130, 246, 0.06); }
+        .upload-zone i.upload-icon { font-size: 3rem; color: var(--bleu); margin-bottom: 12px; }
+        .upload-zone p { color: var(--text-muted); margin-bottom: 16px; font-size: 0.9rem; }
+
+        .action-btn {
+            width: 32px; height: 32px; border-radius: 8px; border: none; background: transparent; color: var(--text-muted); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: var(--transition); font-size: 13px;
+        }
+        .action-btn:hover { background: rgba(59, 130, 246, 0.1); color: var(--bleu); }
+
+        .settings-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; }
+        .settings-section { background: rgba(0, 0, 0, 0.35); border-radius: var(--radius-sm); padding: 24px; border: 1px solid rgba(255, 255, 255, 0.04); }
+        .settings-section-title { font-size: 1rem; font-weight: 700; color: white; margin-bottom: 18px; display: flex; align-items: center; gap: 10px; }
+        .settings-section-title i { color: var(--bleu); font-size: 1.1rem; }
+
+        .avatar-upload-area { display: flex; align-items: center; gap: 20px; margin-bottom: 20px; }
+        .avatar-preview {
+            width: 80px; height: 80px; border-radius: 50%; overflow: hidden; border: 3px solid var(--rouge);
+            box-shadow: 0 0 20px var(--rouge-glow); flex-shrink: 0; position: relative; cursor: pointer;
+        }
+        .avatar-preview img { width: 100%; height: 100%; object-fit: cover; }
+        .avatar-preview .avatar-fallback-big {
+            width: 100%; height: 100%; background: linear-gradient(135deg, var(--rouge), var(--bleu));
+            display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 28px; color: white;
+        }
+        .avatar-preview:hover::after {
+            content: '\f030'; font-family: 'Font Awesome 6 Free'; font-weight: 900; position: absolute; inset: 0;
+            background: rgba(0, 0, 0, 0.6); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: white; border-radius: 50%;
+        }
+
+        .avatar-upload-info h4 { font-size: 0.95rem; margin-bottom: 4px; }
+        .avatar-upload-info p { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 10px; }
+
+        .welcome-card {
+            background: linear-gradient(135deg, rgba(211, 0, 0, 0.1), rgba(30, 58, 138, 0.1)); border: 1px solid rgba(211, 0, 0, 0.2);
+            border-radius: var(--radius); padding: 28px; margin-bottom: 28px; display: flex; align-items: center; gap: 24px;
+        }
+        .welcome-icon {
+            width: 64px; height: 64px; border-radius: 20px; background: linear-gradient(135deg, var(--rouge), var(--bleu-dark));
+            display: flex; align-items: center; justify-content: center; font-size: 28px; flex-shrink: 0;
+        }
+        .welcome-text h2 { font-size: 1.2rem; font-weight: 800; margin-bottom: 4px; }
+        .welcome-text h2 .accent {
+            background: linear-gradient(135deg, var(--rouge), var(--bleu)); -webkit-background-clip: text; background-clip: text; color: transparent;
+        }
+        /* Icône illustrée qui remplace l'emoji du titre d'accueil. */
+        .welcome-text h2 .icone-titre { width: 24px; height: 24px; object-fit: contain; vertical-align: -4px; margin-left: 4px; display: inline-block; }
+        .welcome-text p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; }
+        .welcome-text .live-time { font-size: 0.78rem; color: var(--text-muted); font-variant-numeric: tabular-nums; margin-top: 4px; }
+
+        .toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
+        .toast {
+            background: rgba(10, 10, 10, 0.95); backdrop-filter: blur(16px); border-radius: var(--radius-xs); padding: 14px 20px;
+            display: flex; align-items: center; gap: 12px; max-width: 400px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5); animation: toastIn 0.3s ease; font-size: 0.85rem;
+        }
+        .toast.success { border-left: 3px solid var(--success); }
+        .toast.error { border-left: 3px solid var(--rouge); }
+        .toast.info { border-left: 3px solid var(--bleu); }
+        .toast.warning { border-left: 3px solid var(--warning); }
+        .toast i { font-size: 1.1rem; }
+
+        @keyframes toastIn { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes toastOut { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(40px); } }
+
+        @media (max-width: 900px) {
+            .container { padding: 12px; }
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+            .settings-grid { grid-template-columns: 1fr; }
+            .welcome-card { flex-direction: column; text-align: center; }
+        }
+        @media (max-width: 640px) {
+            .nav-item span { display: none; }
+            .nav-item i { font-size: 1.2rem; }
+            .nav-item { padding: 12px 10px; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .user-info strong { font-size: 0.78rem; }
+            .user-section { padding: 6px 12px; gap: 10px; }
+            header { padding: 12px 14px; }
+            .glass-panel { padding: 18px; }
+        }
+
+        /* ======================================
+           ADAPTATION AUX ÉCRANS
+           Placé en fin de feuille pour primer sur les règles ci-dessus.
+           Tout est dans des @media : l'affichage ordinateur est inchangé.
+           ====================================== */
+        img {
+            max-width: 100%;
+        }
+
+        @media (max-width: 640px) {
+            /* Les notifications mesuraient 400 px de large : sur un téléphone
+               de 360 px elles débordaient de l'écran. */
+            .toast-container {
+                left: 12px;
+                right: 12px;
+                bottom: 12px;
+            }
+            .toast {
+                max-width: none;
+                width: 100%;
+            }
+            /* Lignes de listes autorisées à passer à la ligne. */
+            .doc-item,
+            .suggestion-item {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+            .modal {
+                width: 92vw;
+            }
+            /* Cibles tactiles : 32 px est trop petit pour un doigt. */
+            .action-btn,
+            .modal-close {
+                width: 40px;
+                height: 40px;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .container { padding: 10px; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .quick-actions-grid { grid-template-columns: 1fr; }
+            header { padding: 10px 12px; gap: 12px; }
+            .user-section { padding: 6px 10px; gap: 8px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<div class="container">
+    <header>
+        <div class="logo-section">
+            <div class="logo-circle">
+                <img src="../Image/logo.jpg" alt="GTA Logo" onerror="if (this.getAttribute('src').indexOf('/') < 0 && window.corrigerImagesCourtes) { window.corrigerImagesCourtes(); return; } this.style.display='none'; this.parentElement.innerHTML='<span style=\'font-size:1.5rem;font-weight:900;color:var(--rouge);\'>GTA</span>';">
+            </div>
+            <div class="site-title">
+                <h1>ESPACE ÉLÈVE</h1>
+                <p>Groupe GTA — Excellence & Réussite</p>
+            </div>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+            <div class="user-section">
+                <div class="user-avatar-header" id="headerAvatarContainer" onclick="navigateTo('parametres')">
+                    <div class="avatar-fallback" id="headerAvatarFallback">ED</div>
+                    <img id="headerAvatarImg" src="" alt="" style="display:none;">
+                </div>
+                <div class="user-info">
+                    <strong id="headerUserName">Élève</strong>
+                    <span>Élève</span>
+                </div>
+                <button class="logout-btn" id="logoutBtn">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i>Déconnexion
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <nav>
+        <div class="nav-item active" data-target="apercu"><i class="fa-solid fa-chart-simple"></i><span>Aperçu</span></div>
+        <div class="nav-item" data-target="documents"><i class="fa-solid fa-file-lines"></i><span>Documents</span></div>
+        <div class="nav-item" data-target="suggestions"><i class="fa-solid fa-comment-dots"></i><span>Suggestions</span></div>
+        <div class="nav-item" data-target="parametres"><i class="fa-solid fa-gear"></i><span>Paramètres</span></div>
+    </nav>
+
+    <main>
+        <section id="apercu" class="tab-content active">
+            <div class="welcome-card">
+                <div class="welcome-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+                <div class="welcome-text">
+                    <h2>Bienvenue, <span class="accent" id="welcomeName">Élève</span> <img class="icone-titre" src="pile.png" alt="" width="24" height="24"></h2>
+                    <p>Consultez vos documents, envoyez des suggestions et personnalisez votre profil.</p>
+                    <div class="live-time" id="liveClock"></div>
+                </div>
+            </div>
+
+            <div class="stats-grid" id="statsContainer"></div>
+
+            <div class="glass-panel">
+                <div class="panel-title"><i class="fa-solid fa-clock-rotate-left"></i> Activité récente</div>
+                <div id="recentActivity" style="color:var(--text-muted); font-size:0.88rem;"></div>
+            </div>
+        </section>
+
+        <section id="documents" class="tab-content">
+            <div class="glass-panel">
+                <div class="panel-title"><i class="fa-solid fa-cloud-arrow-up"></i> Espace Documentaire</div>
+                <div class="filters-bar">
+                    <div class="search-box">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" placeholder="Rechercher un document..." id="docSearchInput" oninput="renderDocumentsList()">
+                    </div>
+                </div>
+
+                <div class="upload-zone" id="uploadZone">
+                    <i class="fa-solid fa-folder-open upload-icon"></i>
+                    <p>Glissez-déposez ou cliquez pour envoyer un document</p>
+                    <span style="font-size:0.72rem; color:var(--text-muted);">Formats : PDF, DOC, JPG, PNG, TXT, XLSX — Max 15 Mo</span>
+                    <input type="file" id="fileInput" accept=".pdf,.doc,.docx,.jpg,.png,.txt,.xlsx" style="display:none;" multiple>
+                    <br>
+                    <button id="triggerUpload" class="btn-secondary" style="margin-top:16px;"><i class="fa-solid fa-upload"></i> Envoyer un document</button>
+                </div>
+
+                <div>
+                    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
+                        <h4 style="color:white; display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-folder" style="color:var(--bleu);"></i> Fichiers partagés</h4>
+                        <span style="font-size:0.75rem; color:var(--text-muted);" id="docCount"></span>
+                    </div>
+                    <div id="documentsList"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="suggestions" class="tab-content">
+            <div class="glass-panel">
+                <div class="panel-title"><i class="fa-solid fa-paper-plane"></i> Envoyer une suggestion ou une plainte</div>
+                <div class="form-group">
+                    <label>Sujet</label>
+                    <input type="text" id="suggestionSubject" placeholder="Ex: Demande d'information, Réclamation...">
+                </div>
+                <div class="form-group">
+                    <label>Votre message</label>
+                    <textarea id="suggestionMessage" placeholder="Décrivez votre suggestion, problème ou question..."></textarea>
+                </div>
+                <a class="btn-primary" id="btnEnvoyerSuggestion" href="https://wa.me/2250173045519" target="_blank" rel="noopener noreferrer" style="text-decoration: none;" title="Envoyer ce message sur le WhatsApp du Groupe GTA" onclick="return envoyerSuggestionWhatsApp(this)"><i class="fa-solid fa-paper-plane"></i> Envoyer</a>
+            </div>
+
+            <div class="glass-panel">
+                <div class="panel-title"><i class="fa-solid fa-clock-rotate-left"></i> Mes précédents messages</div>
+                <div id="suggestionsHistory"></div>
+            </div>
+        </section>
+
+        <section id="parametres" class="tab-content">
+            <div class="glass-panel">
+                <div class="panel-title"><i class="fa-solid fa-user-pen"></i> Paramètres du profil</div>
+                <div class="settings-grid">
+                    <div class="settings-section">
+                        <div class="settings-section-title"><i class="fa-solid fa-camera"></i> Photo de profil</div>
+                        <div class="avatar-upload-area">
+                            <div class="avatar-preview" id="settingsAvatarPreview" onclick="document.getElementById('avatarFileInput').click()">
+                                <div class="avatar-fallback-big" id="settingsAvatarFallback">ED</div>
+                                <img id="settingsAvatarImg" src="" alt="" style="display:none; position:absolute; inset:0;">
+                            </div>
+                            <div class="avatar-upload-info">
+                                <h4>Changer la photo</h4>
+                                <p>JPG, PNG — Max 15 Mo</p>
+                                <input type="file" id="avatarFileInput" accept=".jpg,.jpeg,.png,.webp" aria-label="Sélectionner une photo de profil" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;">
+                                <button class="btn-danger btn-sm" id="removeAvatarBtn" style="display:none;" onclick="removeAvatar()">
+                                    <i class="fa-solid fa-trash"></i> Supprimer
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="settings-section-title" style="margin-top:20px;"><i class="fa-solid fa-id-card"></i> Informations personnelles</div>
+                        <div class="form-group">
+                            <label>Nom complet</label>
+                            <input type="text" id="settingsFullname" placeholder="Votre nom complet">
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="settingsEmail" placeholder="votre@email.com">
+                        </div>
+                        <div class="form-group">
+                            <label>Téléphone</label>
+                            <input type="text" id="settingsPhone" placeholder="+225 0000000">
+                        </div>
+                        <button type="button" class="btn-primary" data-gta-save-profile onclick="saveProfileSettings()">
+                            <i class="fa-solid fa-save"></i> Enregistrer
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+<script>
+    // === STORAGE KEYS (partagés avec les autres pages) ===
+    const STORAGE_USERS = "gta_users";
+    const STORAGE_DOCS = "gta_docs";
+    const STORAGE_PROFILE = "gta_eleve_profile";
+    const STORAGE_ACTIVITY = "gta_eleve_activity";
+    const STORAGE_SUGGESTIONS = "gta_eleve_suggestions";
+
+    // === ÉLÈVE CONNECTÉ : identité fournie par la session réelle (API) ===
+    let eleveProfile = {};
+
+    // === DONNÉES PAR DÉFAUT ===
+    // Aucun compte de démonstration : la liste est vide tant que l'API n'a
+    // pas renvoyé de données réelles, et ne contient que les comptes
+    // réellement présents en base (donc 0 utilisateur si la base est vide).
+    const defaultUsers = [];
+
+    let users = [];
+    let documents = [];
+    let suggestions = [];
+    let activityLog = [];
+
+    // === STORAGE HELPERS ===
+    function saveToStorage(key, data) { localStorage.setItem(key, JSON.stringify(data)); }
+    function loadFromStorage(key) { try { return JSON.parse(localStorage.getItem(key)); } catch { return null; } }
+
+    function saveProfile() { saveToStorage(STORAGE_PROFILE, eleveProfile); }
+    function saveActivity() { saveToStorage(STORAGE_ACTIVITY, activityLog); }
+    function saveSuggestions() { saveToStorage(STORAGE_SUGGESTIONS, suggestions); }
+
+    // Les versions précédentes enregistraient dans le navigateur 7 comptes de
+    // démonstration inventés (admin_maitre, staff_gta, eleve_emma…) ainsi que
+    // de faux profils. On les supprime une seule fois afin que l'affichage ne
+    // contienne plus que des données réelles.
+    function purgerDonneesDemo() {
+        const CLE = 'gta_demo_purge_v1';
+        try {
+            if (localStorage.getItem(CLE)) return;
+            ['gta_users', 'gta_admin_profile', 'gta_admin2_profile', 'gta_prof_profile', 'gta_eleve_profile']
+                .forEach(cle => localStorage.removeItem(cle));
+            localStorage.setItem(CLE, '1');
+        } catch {}
+    }
+
+    function loadAll() {
+        purgerDonneesDemo();
+
+        // Users : uniquement des données réelles (0 tant que la base est vide).
+        const storedUsers = loadFromStorage(STORAGE_USERS);
+        users = storedUsers || JSON.parse(JSON.stringify(defaultUsers));
+
+        documents = loadFromStorage(STORAGE_DOCS) || [];
+        suggestions = loadFromStorage(STORAGE_SUGGESTIONS) || [];
+
+        // Profil : rempli uniquement par la session réelle (API).
+        const storedProfile = loadFromStorage(STORAGE_PROFILE);
+        eleveProfile = storedProfile || { fullName: "", email: "", phone: "", avatarData: null };
+        if (!storedProfile) saveProfile();
+
+        activityLog = loadFromStorage(STORAGE_ACTIVITY) || [];
+    }
+
+    // === TOAST ===
+    function showToast(message, type = 'info') {
+        const container = document.getElementById('toastContainer');
+        const icons = { success: 'fa-circle-check', error: 'fa-circle-xmark', warning: 'fa-triangle-exclamation', info: 'fa-circle-info' };
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        toast.innerHTML = `<i class="fa-solid ${icons[type] || icons.info}"></i><span>${message}</span>`;
+        container.appendChild(toast);
+        setTimeout(() => {
+            toast.style.animation = 'toastOut 0.3s ease forwards';
+            setTimeout(() => toast.remove(), 300);
+        }, 3500);
+    }
+
+    function addActivity(text) {
+        const entry = { text, time: new Date().toLocaleString('fr-FR') };
+        activityLog.unshift(entry);
+        if (activityLog.length > 50) activityLog.pop();
+        saveActivity();
+    }
+
+    // === NAVIGATION ===
+    const navItems = document.querySelectorAll('.nav-item');
+    const tabs = document.querySelectorAll('.tab-content');
+    navItems.forEach(item => {
+        item.addEventListener('click', () => {
+            const target = item.getAttribute('data-target');
+            navItems.forEach(n => n.classList.remove('active'));
+            tabs.forEach(t => t.classList.remove('active'));
+            item.classList.add('active');
+            document.getElementById(target).classList.add('active');
+        });
+    });
+    function navigateTo(tabId) {
+        navItems.forEach(n => {
+            n.classList.remove('active');
+            if (n.getAttribute('data-target') === tabId) n.classList.add('active');
+        });
+        tabs.forEach(t => t.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+    }
+
+    // === CLOCK ===
+    function startClock() {
+        function update() {
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const el = document.getElementById('liveClock');
+            if (el) el.textContent = `📅 ${now.toLocaleDateString('fr-FR', options)} — 🕐 ${now.toLocaleTimeString('fr-FR')}`;
+        }
+        update();
+        setInterval(update, 1000);
+    }
+
+    // === STATS ===
+    function renderStats() {
+        const container = document.getElementById('statsContainer');
+        if (!container) return;
+        const totalDocs = documents.length;
+        container.innerHTML = `
+            <div class="stat-card" onclick="navigateTo('documents')">
+                <div class="stat-header">
+                    <div class="stat-icon"><i class="fa-solid fa-file-lines"></i></div>
+                    <span class="stat-trend up"><i class="fa-solid fa-arrow-up"></i> ${totalDocs}</span>
+                </div>
+                <h3>Documents disponibles</h3>
+                <div class="number" data-target="${totalDocs}">0</div>
+                <p class="stat-sub">Fichiers partagés</p>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon"><i class="fa-solid fa-user-check"></i></div>
+                    <span class="stat-trend neutral"><i class="fa-solid fa-minus"></i> Actif</span>
+                </div>
+                <h3>Statut</h3>
+                <div class="number" style="font-size:1.6rem;">Élève</div>
+                <p class="stat-sub">Compte actif</p>
+            </div>
+        `;
+        animateCounters();
+    }
+
+    function animateCounters() {
+        document.querySelectorAll('.number[data-target]').forEach(el => {
+            const target = parseInt(el.dataset.target) || 0;
+            if (target === 0) { el.textContent = '0'; return; }
+            const duration = 1200, start = Date.now();
+            const step = () => {
+                const elapsed = Date.now() - start;
+                const progress = Math.min(elapsed / duration, 1);
+                const eased = 1 - Math.pow(1 - progress, 3);
+                el.textContent = Math.floor(target * eased);
+                if (progress < 1) requestAnimationFrame(step);
+            };
+            requestAnimationFrame(step);
+        });
+    }
+
+    // === DOCUMENTS (lecture seule, téléchargement) ===
+    function renderDocumentsList() {
+        const container = document.getElementById('documentsList');
+        const countEl = document.getElementById('docCount');
+        const searchTerm = (document.getElementById('docSearchInput')?.value || '').toLowerCase();
+        const filteredDocs = documents.filter(doc => doc.name.toLowerCase().includes(searchTerm));
+
+        countEl.textContent = `${filteredDocs.length} fichier(s)`;
+        if (filteredDocs.length === 0) {
+            container.innerHTML = '<p style="color:var(--text-muted); text-align:center; padding:20px;">Aucun document trouvé.</p>';
+            return;
+        }
+        container.innerHTML = filteredDocs.map(doc => {
+            const iconClass = getFileIcon(doc.name);
+            return `
+                <div class="doc-item">
+                    <div class="doc-info">
+                        <i class="fa-solid ${iconClass}"></i>
+                        <div class="doc-details">
+                            <strong>${escapeHtml(doc.name)}</strong>
+                            <span>${(doc.size / 1024).toFixed(1)} Ko — ${doc.date}</span>
+                        </div>
+                    </div>
+                    <div class="doc-actions">
+                        <button class="action-btn" title="Télécharger" onclick="downloadDoc(${doc.id})"><i class="fa-solid fa-download"></i></button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function getFileIcon(name) {
+        const ext = name.split('.').pop().toLowerCase();
+        if (['pdf'].includes(ext)) return 'fa-file-pdf';
+        if (['jpg', 'jpeg', 'png', 'webp', 'gif'].includes(ext)) return 'fa-file-image';
+        if (['doc', 'docx'].includes(ext)) return 'fa-file-word';
+        if (['xls', 'xlsx'].includes(ext)) return 'fa-file-excel';
+        if (['txt'].includes(ext)) return 'fa-file-lines';
+        return 'fa-file';
+    }
+
+    function downloadDoc(docId) {
+        const doc = documents.find(d => d.id === docId);
+        if (doc && doc.dataURL) {
+            const a = document.createElement('a');
+            a.href = doc.dataURL;
+            a.download = doc.name;
+            a.click();
+            showToast(`Téléchargement de "${doc.name}"`, 'info');
+        } else {
+            showToast('Fichier indisponible.', 'error');
+        }
+    }
+
+    // === SUGGESTIONS ===
+    function sendSuggestion() {
+        const subject = document.getElementById('suggestionSubject').value.trim();
+        const message = document.getElementById('suggestionMessage').value.trim();
+        if (!subject || !message) {
+            showToast('Veuillez remplir le sujet et le message.', 'error');
+            return;
+        }
+        const newSuggestion = {
+            id: Date.now(),
+            subject,
+            message,
+            date: new Date().toLocaleString('fr-FR')
+        };
+        suggestions.push(newSuggestion);
+        saveSuggestions();
+        addActivity(`Suggestion envoyée : "${subject}"`);
+        showToast('Votre message a bien été envoyé !', 'success');
+        document.getElementById('suggestionSubject').value = '';
+        document.getElementById('suggestionMessage').value = '';
+        renderSuggestionsHistory();
+    }
+
+    function renderSuggestionsHistory() {
+        const container = document.getElementById('suggestionsHistory');
+        if (!container) return;
+        if (suggestions.length === 0) {
+            container.innerHTML = '<p style="color:var(--text-muted); text-align:center; padding:20px;">Aucune suggestion envoyée pour le moment.</p>';
+            return;
+        }
+        container.innerHTML = suggestions.slice().reverse().map(s => `
+            <div class="suggestion-item">
+                <div class="suggestion-info">
+                    <i class="fa-solid fa-comment"></i>
+                    <div class="suggestion-details">
+                        <strong>${escapeHtml(s.subject)}</strong>
+                        <span>${escapeHtml(s.message.substring(0, 60))}... — ${s.date}</span>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // === PROFIL ===
+    function loadProfileSettings() {
+        document.getElementById('settingsFullname').value = eleveProfile.fullName || '';
+        document.getElementById('settingsEmail').value = eleveProfile.email || '';
+        document.getElementById('settingsPhone').value = eleveProfile.phone || '';
+        updateAllAvatars();
+    }
+
+    function saveProfileSettings() {
+        const fullName = document.getElementById('settingsFullname').value.trim();
+        const email = document.getElementById('settingsEmail').value.trim();
+        const phone = document.getElementById('settingsPhone').value.trim();
+        if (!fullName) { showToast('Le nom complet est requis.', 'error'); return; }
+
+        eleveProfile.fullName = fullName;
+        eleveProfile.email = email;
+        eleveProfile.phone = phone;
+        saveProfile();
+        addActivity('Profil mis à jour');
+        showToast('Profil enregistré avec succès !', 'success');
+        updateHeaderProfile();
+        updateAllAvatars();
+    }
+
+    function updateHeaderProfile() {
+        const nameEl = document.getElementById('headerUserName');
+        const welcomeEl = document.getElementById('welcomeName');
+        const displayName = eleveProfile.fullName || 'Élève';
+        if (nameEl) nameEl.textContent = displayName;
+        if (welcomeEl) welcomeEl.textContent = displayName;
+    }
+
+    // === AVATAR ===
+    const avatarInput = document.getElementById('avatarFileInput');
+    if (avatarInput) {
+        avatarInput.addEventListener('change', () => {
+            const file = avatarInput.files[0];
+            if (!file) return;
+            if (file.size > 15 * 1024 * 1024) { showToast('Image trop lourde (max 15 Mo).', 'error'); return; }
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                eleveProfile.avatarData = e.target.result;
+                saveProfile();
+                updateAllAvatars();
+                addActivity('Photo de profil modifiée');
+                showToast('Photo de profil mise à jour !', 'success');
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
+    function removeAvatar() {
+        eleveProfile.avatarData = null;
+        saveProfile();
+        updateAllAvatars();
+        addActivity('Photo de profil supprimée');
+        showToast('Photo supprimée.', 'info');
+    }
+
+    function updateAllAvatars() {
+        const initials = getInitials(eleveProfile.fullName || '');
+        const headerImg = document.getElementById('headerAvatarImg');
+        const settingsImg = document.getElementById('settingsAvatarImg');
+        const cloudAvatar = headerImg?.getAttribute('src') || settingsImg?.getAttribute('src') || '';
+        const avatarData = cloudAvatar || eleveProfile.avatarData;
+        const headerFallback = document.getElementById('headerAvatarFallback');
+        if (avatarData) {
+            headerImg.src = avatarData;
+            headerImg.style.display = 'block';
+            headerFallback.style.display = 'none';
+        } else {
+            headerImg.style.display = 'none';
+            headerFallback.style.display = 'flex';
+            headerFallback.textContent = initials;
+        }
+
+        const settingsFallback = document.getElementById('settingsAvatarFallback');
+        const removeBtn = document.getElementById('removeAvatarBtn');
+        if (avatarData) {
+            settingsImg.src = avatarData;
+            settingsImg.style.display = 'block';
+            settingsFallback.style.display = 'none';
+            removeBtn.style.display = 'inline-flex';
+        } else {
+            settingsImg.style.display = 'none';
+            settingsFallback.style.display = 'flex';
+            settingsFallback.textContent = initials;
+            removeBtn.style.display = 'none';
+        }
+    }
+
+    // === ACTIVITÉ ===
+    function renderActivity() {
+        const container = document.getElementById('recentActivity');
+        if (!container) return;
+        if (activityLog.length === 0) {
+            container.innerHTML = '<p style="padding:12px 0;">Aucune activité récente.</p>';
+            return;
+        }
+        container.innerHTML = activityLog.slice(0, 6).map(a => `
+            <div style="display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.04);">
+                <i class="fa-solid fa-circle" style="font-size:5px; color:var(--rouge);"></i>
+                <span style="flex:1;">${escapeHtml(a.text)}</span>
+                <span style="font-size:0.7rem; color:var(--text-muted); white-space:nowrap;">${a.time}</span>
+            </div>
+        `).join('');
+    }
+
+    // === LOGOUT ===
+    document.getElementById('logoutBtn')?.addEventListener('click', () => {
+        showToast('Déconnexion...', 'info');
+        setTimeout(() => window.location.href = '../index.html', 1500);
+    });
+
+    // === HELPERS ===
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+    function getInitials(name) {
+        if (!name) return '??';
+        const parts = name.trim().split(/\s+/);
+        if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+        return name.substring(0, 2).toUpperCase();
+    }
+
+    function refreshAllUI() {
+        renderStats();
+        renderDocumentsList();
+        renderSuggestionsHistory();
+        renderActivity();
+        updateHeaderProfile();
+        updateAllAvatars();
+    }
+
+    // === INIT ===
+    loadAll();
+    loadProfileSettings();
+    refreshAllUI();
+    startClock();
+</script>
+    <script src="../gta-cloud.js?v=20260930-6"></script>
+</body>
+</html>

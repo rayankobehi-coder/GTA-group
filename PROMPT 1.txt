@@ -1,0 +1,60 @@
+PROMPT 1 : Automatisation de l'Inscription via Telegram
+Fichier cible : accueil.html
+
+Token du Bot Telegram : 8672835698:AAE5XG2wSh8DSTWAc32ncYhf-WR-eMJ_yNk
+
+Instructions :
+
+Lorsqu'un utilisateur remplit le formulaire d'inscription et clique sur le bouton "Envoyer ma demande d'inscription", configure l'automatisation pour que toutes les données saisies me soient instantanément envoyées sur mon compte Telegram via ce bot.
+
+Sur le bouton "Appeler maintenant", configure un lien d'action direct qui propose d'appeler mon numéro de téléphone : 0173045519.
+
+PROMPT 2 : Système de Connexion et Redirection
+Fichier cible : formulaire.html
+
+Instructions :
+
+Crée la logique de connexion (authentification) : lorsque l'utilisateur saisit son nom d'utilisateur et son mot de passe, l'application doit vérifier son rôle (élève, prof, admin) et le rediriger immédiatement vers son tableau de bord dédié.
+
+Pour la fonction "Mot de passe oublié", fais apparaître une option claire affichant mon numéro (0173045519) pour qu'ils puissent m'appeler directement.
+
+PROMPT 3 : Dashboard de l'Admin Absolu
+Fichier cible : CEEJAY.html
+
+Identifiants de l'Admin Absolu : ID: ceejay | Mot de passe: yajeec
+
+Instructions :
+
+Cet administrateur a tous les droits : accès complet à toutes les données, modification, suppression et consultation. C'est le maître absolu du système.
+
+Rends tout le tableau de bord dynamique et fonctionnel grâce à la base de données et au serveur. Dans la section "Aperçu", l'admin doit voir en temps réel : le nombre total d'utilisateurs connectés au serveur, l'état de la base de données, et le nombre total d'élèves inscrits.
+
+Sécurise la page : l'accès à ce tableau de bord doit être strictement impossible tant que l'admin ne s'est pas connecté avec succès.
+
+PROMPT 4 : Dashboards Secondaires (Rôles & Restrictions)
+Fichiers cibles : lepere.html, élève.html, prof.html
+
+Identifiants Admin Secondaire (lepere.html) : ID: lepere | Mot de passe: peregta
+
+Instructions :
+
+L'interface de ces pages est identique à celle de l'admin absolu, mais les données et accès affichés dépendent strictement du rôle.
+
+Gère la redirection automatique à la connexion : si l'identifiant pointe vers l'admin secondaire (lepere), redirige vers lepere.html. Pour les élèves et profs, redirige respectivement vers élève.html ou prof.html en fonction du profil créé par l'Admin Absolu.
+
+Automatise et rend fonctionnelles toutes les fonctionnalités de ces pages. Assure-toi que chaque utilisateur puisse personnaliser son propre espace et que ses modifications soient sauvegardées.
+
+PROMPT 5 : Cohérence Globale et Synchronisation
+Instructions :
+Relie toutes les pages de l'application entre elles (Frontend, Backend, Base de données). Toute modification de données apportée par l'Admin Absolu ou un utilisateur sur son espace doit être prise en compte instantanément et se répercuter partout sur le site.
+
+PROMPT 6 : Création et Optimisation de la Base de Données (Carte Blanche)
+Instructions :
+Crée le script d'une base de données SQL optimisée pour une structure d'encadrement, de gestion des élèves et de leurs compétences. Tu as carte blanche pour concevoir l'architecture de la database, mais elle doit obligatoirement inclure :
+
+Gestion des comptes : Stockage sécurisé des identifiants (créés par l'Admin Absolu) permettant aux élèves, profs et admins de se connecter.
+
+Stockage de fichiers : Un système permettant d'importer (uploader), de lier et de télécharger ultérieurement des fichiers et des documents pour chaque profil.
+
+Performance : Optimise les tables et le code pour que le site soit extrêmement fluide et rapide. Rajoute toutes les automatisations et fonctionnalités manquantes pour rendre la gestion de cette structure parfaite.
+automatise donne uje focntionalité a tout ce que tu vois que je n'ai pas citer dans le prompt comme les cloche de notif etc 
